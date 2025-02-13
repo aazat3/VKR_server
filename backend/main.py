@@ -35,7 +35,7 @@ app.add_middleware(
     allow_origins=[
         # "http://localhost:5173",
         # "http://31.129.43.117",
-        "http://aazatserver.ru/",
+        "http://aazatserver.ru",
     ],
     allow_credentials=True,
     allow_methods=["*"],
