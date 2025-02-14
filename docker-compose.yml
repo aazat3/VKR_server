@@ -25,7 +25,7 @@ services:
       - '/etc/letsencrypt:/etc/letsencrypt'
     depends_on:
       - api_server
-      - scale_server
+      # - scale_server
     networks:
       - dev
 
