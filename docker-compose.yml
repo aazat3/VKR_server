@@ -2,29 +2,41 @@ networks:
   dev:
 
 services:
-#   nginx:
-#     image: nginx:stable-alpine
-#     ports:
-#       - "80:80"
-#       - "443:443"
-#     volumes:
-#       - './nginx.conf:/etc/nginx/nginx.conf'
-#       - '/etc/letsencrypt:/etc/letsencrypt'
-#     depends_on:
-#       - backend
-#       - frontend
-#     networks:
-#       - dev
+
+  api_server:
+    build:
+      context: ./api_server
+    networks:
+      - dev
+
+  scale_server:
+    build:
+      context: ./scale_server
+    networks:
+      - dev
     
+  # nginx:
+  #   image: nginx:stable-alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - './nginx.conf:/etc/nginx/nginx.conf'
+  #     - '/etc/letsencrypt:/etc/letsencrypt'
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   networks:
+  #     - dev
 
-  backend:
-    build:
-      context: ./backend
-    networks:
-      - dev
+  # backend:
+  #   build:
+  #     context: ./backend
+  #   networks:
+  #     - dev
 
-  frontend:
-    build:
-      context: ./frontend
-    networks:
-      - dev
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   networks:
+  #     - dev
