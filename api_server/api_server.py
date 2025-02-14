@@ -16,7 +16,8 @@ def get_weights():
 
     data = [(1, 30, '2025-02-14T10:00:00'), (2, 45, '2025-02-14T11:00:00')]
 
-    return jsonify([{"device_id": d[0], "weight": d[1], "timestamp": d[2]} for d in data])
+    # return jsonify([{"device_id": d[0], "weight": d[1], "timestamp": d[2]} for d in data])
+    return 'Hello, World!'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
