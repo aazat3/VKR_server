@@ -7,7 +7,7 @@ import uvicorn
 app = FastAPI()
 
 
-@app.get("/api")
+@app.get("item")
 def get_items():
     items = [
         {
@@ -44,7 +44,7 @@ app.add_middleware(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 # from flask import Flask, jsonify
