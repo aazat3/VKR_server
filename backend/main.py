@@ -30,7 +30,7 @@ def get_items():
     return items
 
 @app.get("")
-def get_items():
+def get_items1():
     items = [
         {
             "id": 1,
@@ -52,7 +52,7 @@ def get_items():
     return items
 
 @app.get("/asd")
-def get_items():
+def get_items2():
     items = [
         {
             "id": 1,
