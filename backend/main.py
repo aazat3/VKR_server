@@ -8,8 +8,8 @@ app = FastAPI()
 
 
 @app.get("/item")
-def get_items():
-    items = [
+def get_item():
+    item = [
         {
             "id": 1,
             "name": "Docker",
@@ -26,8 +26,8 @@ def get_items():
             "img": "https://cdn-icons-png.flaticon.com/512/25/25231.png",
         },
     ]
-    random.shuffle(items)
-    return items
+    random.shuffle(item)
+    return item
 
 @app.get("")
 def get_items1():
