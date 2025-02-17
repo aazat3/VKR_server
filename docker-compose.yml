@@ -12,7 +12,7 @@ services:
       - '/etc/letsencrypt:/etc/letsencrypt'
     depends_on:
       - backend
-      - frontend
+      # - frontend
     networks:
       - dev
     
@@ -23,8 +23,8 @@ services:
     networks:
       - dev
 
-  frontend:
-    build:
-      context: ./frontend
-    networks:
-      - dev
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   networks:
+  #     - dev

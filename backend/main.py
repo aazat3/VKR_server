@@ -34,9 +34,21 @@ def get_items():
     items = [
         {
             "id": 1,
-            "name": "aasdsadasdsad",
+            "name": "Docker",
+            "img": "https://static-00.iconduck.com/assets.00/docker-icon-2048x2048-5mc7mvtn.png",
+        },
+        {
+            "id": 2,
+            "name": "Nginx",
+            "img": "https://www.svgrepo.com/show/373924/nginx.svg",
+        },
+        {
+            "id": 3,
+            "name": "GitHub",
+            "img": "https://cdn-icons-png.flaticon.com/512/25/25231.png",
         },
     ]
+    random.shuffle(items)
     return items
 
 @app.get("/asd")
@@ -44,9 +56,21 @@ def get_items():
     items = [
         {
             "id": 1,
-            "name": "aasdsadasdsad",
+            "name": "Docker",
+            "img": "https://static-00.iconduck.com/assets.00/docker-icon-2048x2048-5mc7mvtn.png",
+        },
+        {
+            "id": 2,
+            "name": "Nginx",
+            "img": "https://www.svgrepo.com/show/373924/nginx.svg",
+        },
+        {
+            "id": 3,
+            "name": "GitHub",
+            "img": "https://cdn-icons-png.flaticon.com/512/25/25231.png",
         },
     ]
+    random.shuffle(items)
     return items
 
 app.add_middleware(
