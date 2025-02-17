@@ -29,6 +29,15 @@ def get_items():
     random.shuffle(items)
     return items
 
+@app.get("/")
+def get_items():
+    items = [
+        {
+            "id": 1,
+            "name": "aasdsadasdsad",
+        },
+    ]
+    return items
 
 app.add_middleware(
     CORSMiddleware,
