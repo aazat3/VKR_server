@@ -7,7 +7,7 @@ import uvicorn
 app = FastAPI()
 
 
-@app.get("item")
+@app.get("/item")
 def get_items():
     items = [
         {
