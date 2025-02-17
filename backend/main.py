@@ -29,7 +29,17 @@ def get_items():
     random.shuffle(items)
     return items
 
-@app.get("/")
+@app.get("")
+def get_items():
+    items = [
+        {
+            "id": 1,
+            "name": "aasdsadasdsad",
+        },
+    ]
+    return items
+
+@app.get("/asd")
 def get_items():
     items = [
         {
