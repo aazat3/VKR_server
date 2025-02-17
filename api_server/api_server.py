@@ -7,7 +7,7 @@ import uvicorn
 app = FastAPI()
 
 
-@app.get("/api/weights")
+@app.get("/api")
 def get_items():
     items = [
         {
@@ -30,17 +30,17 @@ def get_items():
     return items
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        # "http://localhost:5173",
-        # "http://31.129.43.117",
-        "http://aazatserver.ru",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         # "http://localhost:5173",
+#         # "http://31.129.43.117",
+#         "http://aazatserver.ru",
+#     ],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
 if __name__ == "__main__":
