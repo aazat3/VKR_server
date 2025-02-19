@@ -1,7 +1,7 @@
 import sqlite3
 import paho.mqtt.client as mqtt
 from pathlib import Path
-
+import logging
 
 # Callback при подключении к брокеру
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -20,9 +20,12 @@ def on_message(client, userdata, msg):
     print(f"Stored: {device_id} - {weight}")
 
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Подключение к базе данных (или создание)
 db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-print(db_path)
+logger.info(db_path)
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 cursor.execute("""
