@@ -37,7 +37,7 @@ def get_data():
     
 
     db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path.resolve())
     cursor = conn.cursor()
     cursor.execute("SELECT device_id, weight, timestamp FROM weight_data ORDER BY timestamp DESC LIMIT 10")
     data = cursor.fetchall()
