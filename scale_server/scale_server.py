@@ -22,6 +22,7 @@ def on_message(client, userdata, msg):
 
 # Подключение к базе данных (или создание)
 db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
+print(db_path)
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 cursor.execute("""

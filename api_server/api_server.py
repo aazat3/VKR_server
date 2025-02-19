@@ -31,7 +31,6 @@ def get_data():
     # random.shuffle(items)
 
     db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-    
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("SELECT device_id, weight, timestamp FROM weight_data ORDER BY timestamp DESC LIMIT 10")
