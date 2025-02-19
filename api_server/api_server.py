@@ -12,7 +12,7 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-logger.info(db_path)
+logger.info(db_path.resolve())
 
 @app.get("/weights")
 def get_data():

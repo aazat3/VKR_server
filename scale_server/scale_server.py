@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # Подключение к базе данных (или создание)
 db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-logger.info(db_path)
+logger.info(db_path.resolve())
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 cursor.execute("""
