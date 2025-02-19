@@ -11,6 +11,8 @@ app = FastAPI()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
+logger.info(db_path)
 
 @app.get("/weights")
 def get_data():
@@ -35,7 +37,6 @@ def get_data():
     
 
     db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-    logger.info(db_path)
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("SELECT device_id, weight, timestamp FROM weight_data ORDER BY timestamp DESC LIMIT 10")
