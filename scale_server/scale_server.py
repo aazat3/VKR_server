@@ -1,5 +1,6 @@
 import sqlite3
 import paho.mqtt.client as mqtt
+from pathlib import Path
 
 
 # Callback при подключении к брокеру
@@ -20,7 +21,8 @@ def on_message(client, userdata, msg):
 
 
 # Подключение к базе данных (или создание)
-conn = sqlite3.connect("weights.db")
+db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
+conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS weight_data (

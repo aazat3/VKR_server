@@ -9,11 +9,11 @@ services:
     networks:
       - dev
 
-  # scale_server:
-  #   build:
-  #     context: ./scale_server
-  #   networks:
-  #     - dev
+  scale_server:
+    build:
+      context: ./scale_server
+    networks:
+      - dev
     
   nginx:
     image: nginx:stable-alpine
@@ -25,7 +25,7 @@ services:
       - '/etc/letsencrypt:/etc/letsencrypt'
     depends_on:
       - api_server
-      # - scale_server
+      - scale_server
     networks:
       - dev
 
