@@ -4,10 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import sqlite3
 from pathlib import Path
+import logging
 
 
 app = FastAPI()
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.get("/weights")
 def get_data():
@@ -29,8 +32,10 @@ def get_data():
     #     },
     # ]
     # random.shuffle(items)
+    
 
     db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
+    logger.info(db_path)
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("SELECT device_id, weight, timestamp FROM weight_data ORDER BY timestamp DESC LIMIT 10")
