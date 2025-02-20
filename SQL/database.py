@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
 # Данные для подключения
-DATABASE_URL = "postgresql://admin:admin@host.docker.internal:5432/nutrition_db"
+database_url = os.getenv('DATABASE_URL')
+DATABASE_URL = "database_url"
 
 # Создание движка SQLAlchemy
 engine = create_engine(DATABASE_URL)
