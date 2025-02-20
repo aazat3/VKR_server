@@ -8,6 +8,8 @@ services:
       context: ./api_server
     networks:
       - dev
+    volumes:
+      - ./database:/app/database
 
   scale_server:
     build:
