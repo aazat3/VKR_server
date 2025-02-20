@@ -9,7 +9,7 @@ services:
     networks:
       - dev
     volumes:
-      - ./SQL:/app/SQL
+      - ./SQL:/SQL
 
   scale_server:
     build:
