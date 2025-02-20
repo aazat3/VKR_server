@@ -1,5 +1,7 @@
 networks:
   dev:
+    external: true
+
 
 services:
 
@@ -8,6 +10,8 @@ services:
       context: ./api_server
     networks:
       - dev
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@host.docker.internal:5432/nutrition_db
     volumes:
       - ./SQL:/SQL
 
