@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from pathlib import Path
 import logging
-from database import database, models, schemas, crud
+from SQL import database, models, schemas, crud
 
 
 app = FastAPI()
