@@ -5,7 +5,7 @@ import os
 
 # Данные для подключения
 database_url = os.getenv('DATABASE_URL')
-DATABASE_URL = "database_url"
+DATABASE_URL = database_url
 
 # Создание движка SQLAlchemy
 engine = create_engine(DATABASE_URL)
