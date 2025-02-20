@@ -2,48 +2,38 @@ import random
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import sqlite3
 from pathlib import Path
 import logging
+from ..database import database, models, schemas, crud
 
 
 app = FastAPI()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-logger.info(db_path.resolve())
 
-@app.get("/weights")
-def get_data():
-    # items = [
-    #     {
-    #         "id": 1,
-    #         "name": "Docker",
-    #         "img": "https://static-00.iconduck.com/assets.00/docker-icon-2048x2048-5mc7mvtn.png",
-    #     },
-    #     {
-    #         "id": 2,
-    #         "name": "Nginx",
-    #         "img": "https://www.svgrepo.com/show/373924/nginx.svg",
-    #     },
-    #     {
-    #         "id": 3,
-    #         "name": "GitHub",
-    #         "img": "https://cdn-icons-png.flaticon.com/512/25/25231.png",
-    #     },
-    # ]
-    # random.shuffle(items)
-    
 
-    db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-    conn = sqlite3.connect(db_path.resolve())
-    cursor = conn.cursor()
-    cursor.execute("SELECT device_id, weight, timestamp FROM weight_data ORDER BY timestamp DESC LIMIT 10")
-    data = cursor.fetchall()
-    conn.close()
 
-    return [{"device_id": row[0], "weight": row[1], "timestamp": row[2]} for row in data]
+# @app.get("/weights")
+# def get_data():
+#     db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
+#     conn = sqlite3.connect(db_path.resolve())
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT device_id, weight, timestamp FROM weight_data ORDER BY timestamp DESC LIMIT 10")
+#     data = cursor.fetchall()
+#     conn.close()
+
+#     return [{"device_id": row[0], "weight": row[1], "timestamp": row[2]} for row in data]
+
+# Эндпоинт для добавления продукта
+@app.post("/products/", response_model=schemas.ProductResponse)
+def create_product(product: schemas.ProductCreate, db: Session = Depends(database.get_db)):
+    return crud.create_product(db, product)
+
+# Эндпоинт для получения всех продуктов
+@app.get("/products/", response_model=list[schemas.ProductResponse])
+def get_products(db: Session = Depends(database.get_db)):
+    return crud.get_products(db)
 
 
 app.add_middleware(
