@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 # Создание MQTT-клиента
 client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 client.on_connect = on_connect
+logger.info("connected to mqqt")
 # client.on_connect = lambda c, u, f, rc: c.subscribe("iot/+/weight")
 client.on_message = on_message
 
