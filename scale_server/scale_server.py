@@ -1,7 +1,29 @@
 import sqlite3
 import paho.mqtt.client as mqtt
-from pathlib import Path
+# from pathlib import Path
 import logging
+from sqlalchemy.orm import Session
+import json
+
+
+from SQL import database, models, schemas, crud
+
+def save_to_db(payload):
+    with database.SessionLocal() as db:
+        try:
+            product = models.Product(
+                name = payload["device_id"],
+                calories = payload["device_id"]
+            )
+            db.add(product)
+            db.commit()
+            db.refresh(product)
+        except:
+            db.rollback()
+            print(f"Ошибка сохранения: {e}")
+        finally:
+            db.close()
+        # crud.create_product(db, product)
 
 # Callback при подключении к брокеру
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -11,32 +33,15 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 # Функция обработки сообщений
 def on_message(client, userdata, msg):
+    logger.info(msg)
+
     device_id = msg.topic.split("/")[1]
     weight = float(msg.payload.decode())
-
-    cursor.execute("INSERT INTO weight_data (device_id, weight) VALUES (?, ?)", (device_id, weight))
-    conn.commit()
-
-    print(f"Stored: {device_id} - {weight}")
-
+    payload = json.loads(msg.payload.decode())
+    save_to_db(payload)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Подключение к базе данных (или создание)
-db_path = Path(__file__).parent.parent / 'database'  / 'weights.db'
-logger.info(db_path.resolve())
-conn = sqlite3.connect(db_path.resolve())
-cursor = conn.cursor()
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS weight_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        device_id TEXT,
-        weight FLOAT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-""")
-conn.commit()
 
 # Создание MQTT-клиента
 client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)

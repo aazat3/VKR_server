@@ -10,6 +10,8 @@ services:
       - dev
     environment:
       - DATABASE_URL=postgresql://admin:admin@aazatserver.ru:5432/nutrition_db
+      - DATABASE_URL_async=postgresql+asyncpg://admin:admin@aazatserver.ru:5432/nutrition_db
+
     volumes:
       - ./SQL:/SQL
 
@@ -18,6 +20,11 @@ services:
       context: ./scale_server
     networks:
       - dev
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@aazatserver.ru:5432/nutrition_db
+      - DATABASE_URL_async=postgresql+asyncpg://admin:admin@aazatserver.ru:5432/nutrition_db
+    volumes:
+      - ./SQL:/SQL
     
   nginx:
     image: nginx:stable-alpine
