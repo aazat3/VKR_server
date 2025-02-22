@@ -50,5 +50,5 @@ client.on_connect = on_connect
 # client.on_connect = lambda c, u, f, rc: c.subscribe("iot/+/weight")
 client.on_message = on_message
 
-client.connect("localgost", 1883, 60)  # Подключение к брокеру Mosquitto
+client.connect("aazatserver.ru", 1883, 60)  # Подключение к брокеру Mosquitto
 client.loop_forever()  # Запуск бесконечного цикла
