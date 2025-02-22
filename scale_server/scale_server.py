@@ -34,6 +34,8 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 # Функция обработки сообщений
 def on_message(client, userdata, msg):
+    logger.info("get message")
+
     logger.info(msg)
 
     # device_id = msg.topic.split("/")[1]
