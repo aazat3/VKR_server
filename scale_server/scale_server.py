@@ -5,6 +5,7 @@ import logging
 from sqlalchemy.orm import Session
 import json
 
+# .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{"name": "orange", "calories": 56}' -u "admin" -P "admin"
 
 from SQL import database, models, schemas, crud
 
@@ -35,8 +36,8 @@ def on_connect(client, userdata, flags, reason_code, properties):
 def on_message(client, userdata, msg):
     logger.info(msg)
 
-    device_id = msg.topic.split("/")[1]
-    weight = float(msg.payload.decode())
+    # device_id = msg.topic.split("/")[1]
+    # weight = float(msg.payload.decode())
     payload = json.loads(msg.payload.decode())
     save_to_db(payload)
 
@@ -49,5 +50,5 @@ client.on_connect = on_connect
 # client.on_connect = lambda c, u, f, rc: c.subscribe("iot/+/weight")
 client.on_message = on_message
 
-client.connect("aazatserver.ru", 1883, 60)  # Подключение к брокеру Mosquitto
+client.connect("localgost", 1883, 60)  # Подключение к брокеру Mosquitto
 client.loop_forever()  # Запуск бесконечного цикла
