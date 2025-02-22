@@ -12,8 +12,8 @@ def save_to_db(payload):
     with database.SessionLocal() as db:
         try:
             product = models.Product(
-                name = payload["device_id"],
-                calories = payload["device_id"]
+                name = payload["name"],
+                calories = payload["calories"]
             )
             db.add(product)
             db.commit()
