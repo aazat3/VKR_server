@@ -51,6 +51,6 @@ client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 client.on_connect = on_connect
 # client.on_connect = lambda c, u, f, rc: c.subscribe("iot/+/weight")
 client.on_message = on_message
-
+client.username_pw_set("admin", "admin")
 client.connect("aazatserver.ru", 1883, 60)  # Подключение к брокеру Mosquitto
 client.loop_forever()  # Запуск бесконечного цикла
