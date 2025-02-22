@@ -28,7 +28,7 @@ def save_to_db(payload):
 
 # Callback при подключении к брокеру
 def on_connect(client, userdata, flags, reason_code, properties):
-    print("Connected with result code " + str(reason_code))
+    logger.info("Connected with result code " + str(reason_code))
     client.subscribe("iot/+/weight")  # Подписка на все устройства
 
 
@@ -49,7 +49,6 @@ logger = logging.getLogger(__name__)
 # Создание MQTT-клиента
 client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 client.on_connect = on_connect
-logger.info("connected to mqqt")
 # client.on_connect = lambda c, u, f, rc: c.subscribe("iot/+/weight")
 client.on_message = on_message
 
