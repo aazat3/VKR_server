@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 import json
 
 # .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{"name": "orange", "calories": 56}' -u "admin" -P "admin"
+# .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{\"name\": \"orange\", \"calories\": 56}' -u "admin" -P "admin"
 
 from SQL import database, models, schemas, crud
 
