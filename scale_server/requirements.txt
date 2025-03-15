@@ -1,4 +1,6 @@
 paho-mqtt
+aiomqtt
+asyncio
 sqlalchemy
 psycopg2-binary
 pydantic
