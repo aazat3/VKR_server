@@ -34,7 +34,7 @@ def process_chunk(rec, message):
 
 async def handle_device(client_id, message_queue):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
-    print(f"✅ Начало обработки устройства {client_id}")
+    logger.info(f"✅ Начало обработки устройства {client_id}")
     
     global model
     global spk_model
@@ -90,13 +90,13 @@ async def handle_device(client_id, message_queue):
 
         except asyncio.TimeoutError:
             # Если прошло слишком много времени без сообщений — завершаем задачу
-            print(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
+            logger.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
             break
 
     # Очистка после завершения
     del device_tasks[client_id]
     del message_queue  # Явно удаляем очередь (необязательно, но можно)
-    print(f"🛑 Задача {client_id} завершена")
+    logger.info(f"🛑 Задача {client_id} завершена")
 
 
 def save_to_db(payload):
