@@ -10,6 +10,7 @@ WORKDIR /app
 
 # Скрипт для скачивания модели при необходимости
 RUN mkdir -p /opt/vosk-model-ru
+RUN apt-get update && apt-get install -y wget unzip
 
 COPY download_model.sh /opt/vosk-model-ru/download_model.sh
 RUN chmod +x /opt/vosk-model-ru/download_model.sh
