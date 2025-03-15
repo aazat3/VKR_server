@@ -32,7 +32,12 @@ def save_to_db(payload):
 
 
 async def main():
-    async with aiomqtt.Client("aazatserver.ru",1883, "admin", "admin") as client:
+    async with aiomqtt.Client(
+        hostname="aazatserver.ru",
+        port=1883,
+        username="admin",
+        password="admin"
+    ) as client:
         await client.subscribe("iot/+/weight")
         logger.info("subscribe")
         async for message in client.messages:
