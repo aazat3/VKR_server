@@ -10,6 +10,8 @@ from SQL import database, models, schemas, crud
 # .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{"name": "orange", "calories": 56}' -u "admin" -P "admin"
 # .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{\"name\": \"orange\", \"calories\": 56}' -u "admin" -P "admin"
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def save_to_db(payload):
     with database.SessionLocal() as db:
@@ -23,20 +25,21 @@ def save_to_db(payload):
             db.refresh(product)
         except:
             db.rollback()
-            print(f"Ошибка сохранения: {e}")
+            logger.info("Ошибка сохранения: {e}")
         finally:
             db.close()
         # crud.create_product(db, product)
 
 
 async def main():
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
     async with aiomqtt.Client("aazatserver.ru",1883, "admin", "admin") as client:
         await client.subscribe("iot/+/weight")
         async for message in client.messages:
             payload = json.loads(message.payload.decode())
-            save_to_db(payload)
+            # save_to_db(payload)
+            logger.info(payload["weight"])
+
+
 
 
 asyncio.run(main())
