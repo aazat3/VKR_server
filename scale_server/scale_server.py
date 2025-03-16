@@ -146,6 +146,7 @@ async def main():
         password="admin"
     ) as client:
         await client.subscribe("iot/+/weight")
+        logger.info("susubscribe to iot/+/weight")
         async for message in client.messages:
             # payload = json.loads(message.payload.decode())
             # save_to_db(payload)
