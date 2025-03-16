@@ -151,7 +151,8 @@ async def main():
             # payload = json.loads(message.payload.decode())
             # save_to_db(payload)
             logger.info("get mqtt msg")
-            client_id = message.topic.split("/")[-2]
+            # client_id = message.topic.split("/")[-2]
+            client_id = str(message.topic).split("/")[-2]
             if client_id not in device_tasks:
                 message_queue = asyncio.Queue()
                 device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
