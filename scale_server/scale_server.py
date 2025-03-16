@@ -22,6 +22,7 @@ device_tasks = {}  # Словарь для хранения задач устр�
 INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, message):
+    logger.info(f"✅ обработка аудио")
     if message == '{"eof" : 1}':
         return rec.FinalResult(), True
     if message == '{"reset" : 1}':
