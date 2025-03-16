@@ -150,7 +150,7 @@ async def main():
         async for message in client.messages:
             # payload = json.loads(message.payload.decode())
             # save_to_db(payload)
-            logger.info("get mqtt msg")
+            logger.info(message.payload)
             # client_id = message.topic.split("/")[-2]
             client_id = str(message.topic).split("/")[-2]
             if client_id not in device_tasks:
