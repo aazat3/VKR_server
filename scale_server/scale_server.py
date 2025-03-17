@@ -37,13 +37,11 @@ INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
-
+    logging.info(message)
     try:
         if message == '{"eof" : 1}':
             return rec.FinalResult(), True
-        logging.info(f"Не вариант 1")
         if message == '{"reset" : 1}':
-            logging.info(f"вариант 2")
             return rec.FinalResult(), False
         elif rec.AcceptWaveform(message):
             logging.info(f"вариант 3")
@@ -104,7 +102,6 @@ async def handle_device(client_id, message_queue):
                     rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
                 else:
                     rec = KaldiRecognizer(model, sample_rate)
-                    logging.info(sample_rate)
                 rec.SetWords(show_words)
                 rec.SetMaxAlternatives(max_alternatives)
                 if spk_model:
