@@ -5,9 +5,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # Копируем код в контейнер
-COPY . /app
-WORKDIR /app
-
+COPY . .
 
 # Устанавливаем переменную окружения для отключения буферизации вывода
 ENV PYTHONUNBUFFERED=1

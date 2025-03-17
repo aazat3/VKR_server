@@ -29,15 +29,15 @@ services:
       - MQTT_USERNAME=admin
       - MQTT_PASSWORD=admin
       - TEST_FILE_NAME=test.wav
-      - VOSK_MODEL_PATH=/app/vosk-model-small-ru-0.22
+      - VOSK_MODEL_PATH=/vosk-model-small-ru-0.22
       - DATABASE_URL=postgresql://@aazatserver.ru:5432/nutrition_db
       - DATABASE_URL_async=postgresql+asyncpg://@aazatserver.ru:5432/nutrition_db
       - PYTHONUNBUFFERED=1
     # env_file:
     #   - .env
     volumes:
-      - ./SQL:/app/SQL
-      - ./vosk-model-small-ru-0.22:/app/vosk-model-small-ru-0.22
+      - ./SQL:/SQL
+      - ./vosk-model-small-ru-0.22:/vosk-model-small-ru-0.22
     logging:
       driver: "json-file"
       options:
