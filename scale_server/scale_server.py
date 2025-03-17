@@ -37,7 +37,7 @@ def process_chunk(rec, message):
     
     
 
-async def handle_device(client_id, message_queue, message):
+async def handle_device(client_id, message_queue):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
     logging.info(f"✅ Начало обработки устройства {client_id}")
     
@@ -45,12 +45,16 @@ async def handle_device(client_id, message_queue, message):
     global spk_model
     global args
     global pool
+
     
     recognizer = KaldiRecognizer(model, args.sample_rate)
-    if recognizer.AcceptWaveform(message):
-                            transcribe = recognizer.Result()
-                            data = json.loads(transcribe)
-                            logging.info(data)
+
+    while True:
+        message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
+        if recognizer.AcceptWaveform(message):
+                                transcribe = recognizer.Result()
+                                data = json.loads(transcribe)
+                                logging.info(data)
 
 
 
@@ -183,7 +187,7 @@ async def main():
                         if client_id not in device_tasks:
                             logging.info("New device" + client_id)
                             message_queue = asyncio.Queue()
-                            device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue, payload))
+                            device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
                         await message_queue.put(message)
 
         except Exception as e:
