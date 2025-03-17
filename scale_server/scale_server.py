@@ -106,22 +106,22 @@ async def handle_device(client_id, message_queue):
     logging.info(f"🛑 Задача {client_id} завершена")
 
 
-def save_to_db(payload):
-    with database.SessionLocal() as db:
-        try:
-            product = models.Product(
-                name = payload["name"],
-                calories = payload["calories"]
-            )
-            db.add(product)
-            db.commit()
-            db.refresh(product)
-        except:
-            db.rollback()
-            logger.info("Ошибка сохранения: {e}")
-        finally:
-            db.close()
-        # crud.create_product(db, product)
+# def save_to_db(payload):
+#     with database.SessionLocal() as db:
+#         try:
+#             product = models.Product(
+#                 name = payload["name"],
+#                 calories = payload["calories"]
+#             )
+#             db.add(product)
+#             db.commit()
+#             db.refresh(product)
+#         except:
+#             db.rollback()
+#             logging.info("Ошибка сохранения: {e}")
+#         finally:
+#             db.close()
+#         # crud.create_product(db, product)
 
 
 async def main():
@@ -157,12 +157,15 @@ async def main():
                 await client.subscribe("iot/+/audio")
                 logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
+                    logging.info(message)
+                    logging.info(message_queue.len)
                     # payload = json.loads(message.payload.decode())
                     # save_to_db(payload)
                     # logger.info(message.payload)
                     # client_id = message.topic.split("/")[-2]
                     client_id = str(message.topic).split("/")[-2]
                     if client_id not in device_tasks:
+                        logging.info("New device")
                         message_queue = asyncio.Queue()
                         device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
                     await message_queue.put(message)
