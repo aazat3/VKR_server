@@ -11,29 +11,11 @@ import sys
 from datetime import datetime, timezone
 
 
-
-# .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{"name": "orange", "calories": 56}' -u "admin" -P "admin"
-# .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{\"name\": \"orange\", \"calories\": 56}' -u "admin" -P "admin"
-
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 device_tasks = {}  # Словарь для хранения задач устройств
 INACTIVITY_TIMEOUT = 30
 
-# def process_chunk(rec, message):
-#     logging.info(f"✅ обработка аудио")
-#     if message == '{"eof" : 1}':
-#         logging.info(f"вариант 1")
-#         return rec.FinalResult(), True
-#     if message == '{"reset" : 1}':
-#         logging.info(f"вариант 2")
-#         return rec.FinalResult(), False
-#     elif rec.AcceptWaveform(message):
-#         logging.info(f"вариант 3")
-#         return rec.Result(), False
-#     else:
-#         logging.info(f"вариант 4")
-#         return rec.PartialResult(), False
 
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
@@ -177,10 +159,6 @@ async def main():
                 await client.subscribe("iot/+/audio")
                 logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
-                    # logging.info(message.payload)
-                    # payload = json.loads(message.payload.decode())
-                    # save_to_db(payload)
-                    # client_id = message.topic.split("/")[-2]
                     client_id = str(message.topic).split("/")[-2]
                     if client_id not in device_tasks:
                         logging.info("New device")
