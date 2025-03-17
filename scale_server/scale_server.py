@@ -39,27 +39,19 @@ def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
     
     try:
-        rec.AcceptWaveform(message)
-        logging.info(rec.Result())
-
+        if message == '{"eof" : 1}':
+            return rec.FinalResult(), True
+        if message == '{"reset" : 1}':
+            return rec.FinalResult(), False
+        if rec.AcceptWaveform(message):
+            logging.info(f"вариант 3")
+            return rec.Result(), False
+        else:
+            logging.info(f"вариант 4")
+            return rec.PartialResult(), False
     except Exception as e:
         logging.error(f"❌ Ошибка обработки аудио: {e}")
         return '{"error": "processing error"}', False
-    
-    # try:
-    #     if message == '{"eof" : 1}':
-    #         return rec.FinalResult(), True
-    #     if message == '{"reset" : 1}':
-    #         return rec.FinalResult(), False
-    #     if rec.AcceptWaveform(message):
-    #         logging.info(f"вариант 3")
-    #         return rec.Result(), False
-    #     else:
-    #         logging.info(f"вариант 4")
-    #         return rec.PartialResult(), False
-    # except Exception as e:
-    #     logging.error(f"❌ Ошибка обработки аудио: {e}")
-    #     return '{"error": "processing error"}', False
     
     
 
