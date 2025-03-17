@@ -38,7 +38,6 @@ INACTIVITY_TIMEOUT = 30
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
     if message == '{"eof" : 1}':
-        logging.info(f"вариант 1")
         return rec.FinalResult(), True
     logging.info(f"Не вариант 1")
     if message == '{"reset" : 1}':
@@ -50,6 +49,7 @@ def process_chunk(rec, message):
     else:
         logging.info(f"вариант 4")
         return rec.PartialResult(), False
+    
     
 
 async def handle_device(client_id, message_queue):
@@ -173,10 +173,9 @@ async def main():
                 await client.subscribe("iot/+/audio")
                 logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
-                    logging.info(message.payload)
+                    # logging.info(message.payload)
                     # payload = json.loads(message.payload.decode())
                     # save_to_db(payload)
-                    # logger.info(message.payload)
                     # client_id = message.topic.split("/")[-2]
                     client_id = str(message.topic).split("/")[-2]
                     if client_id not in device_tasks:
