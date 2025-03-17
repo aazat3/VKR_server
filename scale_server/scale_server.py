@@ -54,9 +54,9 @@ async def handle_device(client_id, message_queue):
             message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
             logging.info(message.payload)
             if recognizer.AcceptWaveform(message.payload):
-                                    transcribe = recognizer.Result()
-                                    data = json.loads(transcribe)
-                                    logging.info(data)
+                transcribe = recognizer.Result()
+                data = json.loads(transcribe)
+                logging.info(data)
 
         except asyncio.TimeoutError:
                 # Если прошло слишком много времени без сообщений — завершаем задачу
