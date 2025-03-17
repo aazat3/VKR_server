@@ -42,7 +42,7 @@ def process_chunk(rec, payload):
             transcribe = rec.Result()
             data = json.loads(transcribe)
             logging.info(data)
-            return data, False
+            return data
     except Exception as e:
             logging.error(f"❌ Ошибка обработки аудио: {e}")
             return '{"error": "processing error"}', False
@@ -102,7 +102,7 @@ async def handle_device(client_id, message_queue):
             # response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
             # logging.info(response)
             # if stop: break
-            await loop.run_in_executor(pool, process_chunk, rec, payload)
+            response = await loop.run_in_executor(pool, process_chunk, rec, payload)
 
 
             # if rec.AcceptWaveform(payload):
