@@ -162,6 +162,7 @@ async def main():
                 logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
                     client_id = str(message.topic).split("/")[-2]
+                    await logging.info(client_id)
                     # if client_id not in device_tasks:
                     #     logging.info("New device")
                     #     message_queue = asyncio.Queue()
