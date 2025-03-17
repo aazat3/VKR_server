@@ -17,23 +17,23 @@ device_tasks = {}  # Словарь для хранения задач устр�
 INACTIVITY_TIMEOUT = 30
 
 
-def process_chunk(rec, payload):
-    logging.info(f"✅ обработка аудио")
+# def process_chunk(rec, payload):
+#     logging.info(f"✅ обработка аудио")
     
-    try:
-        if payload == '{"eof" : 1}':
-            return rec.FinalResult(), True
-        if payload == '{"reset" : 1}':
-            return rec.FinalResult(), False
-        if rec.AcceptWaveform(payload):
-            logging.info(f"вариант 3")
-            return rec.Result(), False
-        else:
-            logging.info(f"вариант 4")
-            return rec.PartialResult(), False
-    except Exception as e:
-        logging.error(f"❌ Ошибка обработки аудио: {e}")
-        return '{"error": "processing error"}', False
+#     try:
+#         if payload == '{"eof" : 1}':
+#             return rec.FinalResult(), True
+#         if payload == '{"reset" : 1}':
+#             return rec.FinalResult(), False
+#         if rec.AcceptWaveform(payload):
+#             logging.info(f"вариант 3")
+#             return rec.Result(), False
+#         else:
+#             logging.info(f"вариант 4")
+#             return rec.PartialResult(), False
+#     except Exception as e:
+#         logging.error(f"❌ Ошибка обработки аудио: {e}")
+#         return '{"error": "processing error"}', False
     
 
 def process_chunk(rec, payload):
