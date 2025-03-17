@@ -37,21 +37,29 @@ INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
-    logging.info(message)
+    
     try:
-        if message == '{"eof" : 1}':
-            return rec.FinalResult(), True
-        if message == '{"reset" : 1}':
-            return rec.FinalResult(), False
-        if rec.AcceptWaveform(message):
-            logging.info(f"вариант 3")
-            return rec.Result(), False
-        else:
-            logging.info(f"вариант 4")
-            return rec.PartialResult(), False
+        check = rec.AcceptWaveform(message)
+        logging.info(check)
+
     except Exception as e:
         logging.error(f"❌ Ошибка обработки аудио: {e}")
         return '{"error": "processing error"}', False
+    
+    # try:
+    #     if message == '{"eof" : 1}':
+    #         return rec.FinalResult(), True
+    #     if message == '{"reset" : 1}':
+    #         return rec.FinalResult(), False
+    #     if rec.AcceptWaveform(message):
+    #         logging.info(f"вариант 3")
+    #         return rec.Result(), False
+    #     else:
+    #         logging.info(f"вариант 4")
+    #         return rec.PartialResult(), False
+    # except Exception as e:
+    #     logging.error(f"❌ Ошибка обработки аудио: {e}")
+    #     return '{"error": "processing error"}', False
     
     
 
@@ -161,7 +169,6 @@ async def main():
         model = Model(args.model_path)
         logging.info(f"Модель загружена успешно с пути: {args.model_path}")
     except Exception as e:
-        logging.info(f"Неуд загрузка модели{args.model_path}")
         logging.error(f"❌ Ошибка загрузки модели: {e}")
         
     spk_model = SpkModel(args.spk_model_path) if args.spk_model_path else None
