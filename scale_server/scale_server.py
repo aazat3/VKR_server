@@ -56,7 +56,7 @@ async def handle_device(client_id, message_queue):
         try:
             # Ждём новое сообщение с тайм-аутом
             message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
-            payload = message.payload.decode()
+            payload = message.payload
             last_message_time = datetime.now(timezone.utc)  # Текущее время в UTC
             
             # Load configuration if provided
@@ -157,7 +157,7 @@ async def main():
                 await client.subscribe("iot/+/audio")
                 logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
-                    logging.info(message.payload.decode())
+                    logging.info(message.payload)
                     # payload = json.loads(message.payload.decode())
                     # save_to_db(payload)
                     # logger.info(message.payload)
