@@ -175,7 +175,7 @@ async def main():
                 await client.subscribe("+/stream/voice")
                 logging.info("+/stream/voice")
                 async for message in client.messages:
-                    recognizer = KaldiRecognizer(args.model, args.sample_rate)
+                    recognizer = KaldiRecognizer(args.model_path, args.sample_rate)
                     if recognizer.AcceptWaveform(message.payload):
                         transcribe = recognizer.Result()
                         data = json.loads(transcribe)
