@@ -50,13 +50,23 @@ async def handle_device(client_id, message_queue):
     recognizer = KaldiRecognizer(model, args.sample_rate)
 
     while True:
-        message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
-        logging.info(message.payload)
-        if recognizer.AcceptWaveform(message.payload):
-                                transcribe = recognizer.Result()
-                                data = json.loads(transcribe)
-                                logging.info(data)
+        try:
+            message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
+            logging.info(message.payload)
+            if recognizer.AcceptWaveform(message.payload):
+                                    transcribe = recognizer.Result()
+                                    data = json.loads(transcribe)
+                                    logging.info(data)
 
+        except asyncio.TimeoutError:
+                # Если прошло слишком много времени без сообщений — завершаем задачу
+                logging.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
+                break
+
+        # Очистка после завершения
+        del device_tasks[client_id]
+        del message_queue  # Явно удаляем очередь (необязательно, но можно)
+        logging.info(f"🛑 Задача {client_id} завершена")
 
 
     # loop = asyncio.get_running_loop()
