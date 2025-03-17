@@ -37,71 +37,77 @@ def process_chunk(rec, message):
     
     
 
-async def handle_device(client_id, message_queue):
+async def handle_device(client_id, message_queue, message):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
     logging.info(f"✅ Начало обработки устройства {client_id}")
     
-    global model
-    global spk_model
-    global args
-    global pool
+    recognizer = KaldiRecognizer(model, args.sample_rate)
+    if recognizer.AcceptWaveform(message):
+                            transcribe = recognizer.Result()
+                            data = json.loads(transcribe)
+                            logging.info(data)
 
-    loop = asyncio.get_running_loop()
-    rec = None
-    phrase_list = None
-    sample_rate = args.sample_rate
-    show_words = args.show_words
-    max_alternatives = args.max_alternatives
+    # global model
+    # global spk_model
+    # global args
+    # global pool
 
-    while True:
-        try:
-            # Ждём новое сообщение с тайм-аутом
-            message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
-            payload = message.payload
-            last_message_time = datetime.now(timezone.utc)  # Текущее время в UTC
+    # loop = asyncio.get_running_loop()
+    # rec = None
+    # phrase_list = None
+    # sample_rate = args.sample_rate
+    # show_words = args.show_words
+    # max_alternatives = args.max_alternatives
+
+    # while True:
+    #     try:
+    #         # Ждём новое сообщение с тайм-аутом
+    #         message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
+    #         payload = message.payload
+    #         last_message_time = datetime.now(timezone.utc)  # Текущее время в UTC
             
-            # Load configuration if provided
-            if isinstance(payload, str) and 'config' in payload:
-                jobj = json.loads(payload)['config']
-                logging.info("Config %s", jobj)
-                if 'phrase_list' in jobj:
-                    phrase_list = jobj['phrase_list']
-                if 'sample_rate' in jobj:
-                    sample_rate = float(jobj['sample_rate'])
-                if 'model' in jobj:
-                    model = Model(jobj['model'])
-                    model_changed = True
-                if 'words' in jobj:
-                    show_words = bool(jobj['words'])
-                if 'max_alternatives' in jobj:
-                    max_alternatives = int(jobj['max_alternatives'])
-                continue
+    #         # Load configuration if provided
+    #         if isinstance(payload, str) and 'config' in payload:
+    #             jobj = json.loads(payload)['config']
+    #             logging.info("Config %s", jobj)
+    #             if 'phrase_list' in jobj:
+    #                 phrase_list = jobj['phrase_list']
+    #             if 'sample_rate' in jobj:
+    #                 sample_rate = float(jobj['sample_rate'])
+    #             if 'model' in jobj:
+    #                 model = Model(jobj['model'])
+    #                 model_changed = True
+    #             if 'words' in jobj:
+    #                 show_words = bool(jobj['words'])
+    #             if 'max_alternatives' in jobj:
+    #                 max_alternatives = int(jobj['max_alternatives'])
+    #             continue
 
-            # Create the recognizer, word list is temporary disabled since not every model supports it
-            if not rec or model_changed:
-                model_changed = False
-                if phrase_list:
-                    rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
-                else:
-                    rec = KaldiRecognizer(model, sample_rate)
-                rec.SetWords(show_words)
-                rec.SetMaxAlternatives(max_alternatives)
-                if spk_model:
-                    rec.SetSpkModel(spk_model)
+    #         # Create the recognizer, word list is temporary disabled since not every model supports it
+    #         if not rec or model_changed:
+    #             model_changed = False
+    #             if phrase_list:
+    #                 rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
+    #             else:
+    #                 rec = KaldiRecognizer(model, sample_rate)
+    #             rec.SetWords(show_words)
+    #             rec.SetMaxAlternatives(max_alternatives)
+    #             if spk_model:
+    #                 rec.SetSpkModel(spk_model)
 
-            response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
-            logging.info(response)
-            if stop: break
+    #         response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
+    #         logging.info(response)
+    #         if stop: break
 
-        except asyncio.TimeoutError:
-            # Если прошло слишком много времени без сообщений — завершаем задачу
-            logging.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
-            break
+    #     except asyncio.TimeoutError:
+    #         # Если прошло слишком много времени без сообщений — завершаем задачу
+    #         logging.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
+    #         break
 
-    # Очистка после завершения
-    del device_tasks[client_id]
-    del message_queue  # Явно удаляем очередь (необязательно, но можно)
-    logging.info(f"🛑 Задача {client_id} завершена")
+    # # Очистка после завершения
+    # del device_tasks[client_id]
+    # del message_queue  # Явно удаляем очередь (необязательно, но можно)
+    # logging.info(f"🛑 Задача {client_id} завершена")
 
 
 # def save_to_db(payload):
@@ -165,20 +171,18 @@ async def main():
                     topic = message.topic
                     payload = message.payload
                     client_id = str(message.topic).split("/")[-2]
-                    logging.info(topic)
                     if str(topic).endswith('/voice'):
                         if recognizer.AcceptWaveform(payload):
                             transcribe = recognizer.Result()
                             data = json.loads(transcribe)
                             logging.info(data)
 
-                    # if client_id not in device_tasks:
-                    #     logging.info("New device")
-                    #     message_queue = asyncio.Queue()
-                    #     device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
-                    # await message_queue.put(message)
-                    # asyncio.create_task(recognize(message))
-
+                    if str(topic).endswith('/audio'):
+                        if client_id not in device_tasks:
+                            logging.info("New device" + client_id)
+                            message_queue = asyncio.Queue()
+                            device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue, payload))
+                        await message_queue.put(message)
 
         except Exception as e:
             logging.exception(f"Ошибка MQTT-соединения: {e}")
