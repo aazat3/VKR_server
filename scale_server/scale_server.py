@@ -157,7 +157,7 @@ async def main():
                 await client.subscribe("iot/+/audio")
                 logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
-                    logging.info(message)
+                    logging.info(message.payload.decode())
                     # payload = json.loads(message.payload.decode())
                     # save_to_db(payload)
                     # logger.info(message.payload)
@@ -167,7 +167,7 @@ async def main():
                         logging.info("New device")
                         message_queue = asyncio.Queue()
                         device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
-                    await message_queue.put(message.payload.decode())
+                    await message_queue.put(message)
                     # asyncio.create_task(recognize(message))
         except Exception as e:
             logging.exception(f"Ошибка MQTT-соединения: {e}")
