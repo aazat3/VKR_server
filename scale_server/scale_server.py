@@ -16,13 +16,12 @@ from datetime import datetime, timezone
 # .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{\"name\": \"orange\", \"calories\": 56}' -u "admin" -P "admin"
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
 
 device_tasks = {}  # Словарь для хранения задач устройств
 INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, message):
-    logger.info(f"✅ обработка аудио")
+    logging.info(f"✅ обработка аудио")
     if message == '{"eof" : 1}':
         return rec.FinalResult(), True
     if message == '{"reset" : 1}':
@@ -35,7 +34,7 @@ def process_chunk(rec, message):
 
 async def handle_device(client_id, message_queue):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
-    logger.info(f"✅ Начало обработки устройства {client_id}")
+    logging.info(f"✅ Начало обработки устройства {client_id}")
     
     global model
     global spk_model
@@ -89,18 +88,18 @@ async def handle_device(client_id, message_queue):
                     rec.SetSpkModel(spk_model)
 
             response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
-            logger.info(response)
+            logging.info(response)
             if stop: break
 
         except asyncio.TimeoutError:
             # Если прошло слишком много времени без сообщений — завершаем задачу
-            logger.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
+            logging.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
             break
 
     # Очистка после завершения
     del device_tasks[client_id]
     del message_queue  # Явно удаляем очередь (необязательно, но можно)
-    logger.info(f"🛑 Задача {client_id} завершена")
+    logging.info(f"🛑 Задача {client_id} завершена")
 
 
 def save_to_db(payload):
@@ -152,7 +151,7 @@ async def main():
                 password="admin"
             ) as client:
                 await client.subscribe("iot/+/audio")
-                logger.info("susubscribe to iot/+/audio")
+                logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
                     # payload = json.loads(message.payload.decode())
                     # save_to_db(payload)
@@ -165,7 +164,7 @@ async def main():
                     await message_queue.put(message)
                     # asyncio.create_task(recognize(message))
         except Exception as e:
-            logger.exception(f"Ошибка MQTT-соединения: {e}")
+            logging.exception(f"Ошибка MQTT-соединения: {e}")
             await asyncio.sleep(5)  # Ждём перед повторным подключением
 
 
