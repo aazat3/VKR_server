@@ -86,8 +86,8 @@ async def handle_device(client_id, message_queue):
 
             response = await loop.run_in_executor(pool, process_chunk, rec, payload)
 
-            logging.info(response)
-            # if stop: break
+            logging.info(response[0])
+            if response[1]: break
 
 
 
