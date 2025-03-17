@@ -53,7 +53,7 @@ class VoskMqttServer():
                     self.client.publish(self.pid + '/finalTranscribe', str(data))
 
     def __get_model_path(self, lang='ru'):
-        return 'model-' + lang
+        return environ.get('VOSK_MODEL_PATH', 'model')
 
     def __init_kaldi_recognizer(self, model_path='model-ru'):
         self.model = Model(model_path)
