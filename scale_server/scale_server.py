@@ -19,6 +19,7 @@ INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, payload):    
     try:
+        logging.info(payload)
         if payload == '{"eof" : 1}':
             return rec.FinalResult(), True
         if payload == '{"reset" : 1}':
