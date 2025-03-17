@@ -100,9 +100,9 @@ async def handle_device(client_id, message_queue):
                 if spk_model:
                     rec.SetSpkModel(spk_model)
 
-            response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
+            response = await loop.run_in_executor(pool, process_chunk, rec, payload)
             logging.info(response)
-            if stop: break
+            # if stop: break
 
 
 
