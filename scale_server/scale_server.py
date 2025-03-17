@@ -79,8 +79,20 @@ async def handle_device(client_id, message_queue):
                     max_alternatives = int(jobj['max_alternatives'])
                 continue
 
-            if recognizer.AcceptWaveform(message.payload):
-                transcribe = recognizer.Result()
+            # Create the recognizer, word list is temporary disabled since not every model supports it
+            if not rec or model_changed:
+                model_changed = False
+                if phrase_list:
+                    rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
+                else:
+                    rec = KaldiRecognizer(model, sample_rate)
+                rec.SetWords(show_words)
+                rec.SetMaxAlternatives(max_alternatives)
+                if spk_model:
+                    rec.SetSpkModel(spk_model)
+
+            if rec.AcceptWaveform(message.payload):
+                transcribe = rec.Result()
                 data = json.loads(transcribe)
                 logging.info(data)
 
