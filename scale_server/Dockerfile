@@ -11,4 +11,4 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 
 
-CMD [ "python", "api_server.py" ]
+CMD [ "python", "scale_server.py" ]
