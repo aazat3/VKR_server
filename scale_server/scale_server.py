@@ -131,7 +131,7 @@ async def main():
     
     args = type('', (), {})()
 
-    args.model_path = os.environ.get('VOSK_MODEL_PATH2', 'model')
+    args.model_path = os.environ.get('VOSK_MODEL_PATH', 'model')
     args.spk_model_path = os.environ.get('VOSK_SPK_MODEL_PATH')
     args.sample_rate = float(os.environ.get('VOSK_SAMPLE_RATE', 16000))
     args.max_alternatives = int(os.environ.get('VOSK_ALTERNATIVES', 0))
@@ -158,16 +158,19 @@ async def main():
                 password="admin"
             ) as client:
                 
-                await client.subscribe("iot/+/audio")
-                logging.info("susubscribe to iot/+/audio")
-                async for message in client.messages:
-                    client_id = str(message.topic).split("/")[-2]
-                    if client_id not in device_tasks:
-                        logging.info("New device")
-                        message_queue = asyncio.Queue()
-                        device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
-                    await message_queue.put(message)
-                    # asyncio.create_task(recognize(message))
+                # await client.subscribe("iot/+/audio")
+                # logging.info("susubscribe to iot/+/audio")
+                # async for message in client.messages:
+                #     client_id = str(message.topic).split("/")[-2]
+                #     if client_id not in device_tasks:
+                #         logging.info("New device")
+                #         message_queue = asyncio.Queue()
+                #         device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
+                #     await message_queue.put(message)
+                #     # asyncio.create_task(recognize(message))
+
+
+
 
                 await client.subscribe("+/stream/voice")
                 recognizer = KaldiRecognizer(model, args.sample_rate)
