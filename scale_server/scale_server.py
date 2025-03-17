@@ -75,11 +75,14 @@ async def handle_device(client_id, message_queue):
 
             # Create the recognizer, word list is temporary disabled since not every model supports it
             if not rec or model_changed:
+                logging.info("Create rec_model")
                 model_changed = False
                 if phrase_list:
                     rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
+                    logging.info("Created rec_model")
                 else:
                     rec = KaldiRecognizer(model, sample_rate)
+                    logging.info("Created rec_model")
                 rec.SetWords(show_words)
                 rec.SetMaxAlternatives(max_alternatives)
                 if spk_model:
