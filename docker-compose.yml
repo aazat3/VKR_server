@@ -37,7 +37,7 @@ services:
     #   - .env
     volumes:
       - ./SQL:/SQL
-      - ./vosk-model-small-ru-0.22:/vosk-model-small-ru-0.22
+      - ./scale_server/vosk-model-small-ru-0.22:/vosk-model-small-ru-0.22
     logging:
       driver: "json-file"
       options:
