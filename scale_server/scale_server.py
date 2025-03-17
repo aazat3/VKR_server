@@ -159,31 +159,25 @@ async def main():
             ) as client:
                 
                 await client.subscribe("iot/+/audio")
-                logging.info("susubscribe to iot/+/audio")
+                await client.subscribe("+/stream/voice")
+                recognizer = KaldiRecognizer(model, args.sample_rate)
                 async for message in client.messages:
+                    topic = message.topic
+                    payload = message.payload
                     client_id = str(message.topic).split("/")[-2]
-                    await logging.info(client_id)
+                    logging.info(topic)
+                    if topic.endswith('/voice'):
+                        if recognizer.AcceptWaveform(payload):
+                            transcribe = recognizer.Result()
+                            data = json.loads(transcribe)
+                            logging.info(data)
+
                     # if client_id not in device_tasks:
                     #     logging.info("New device")
                     #     message_queue = asyncio.Queue()
                     #     device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
                     # await message_queue.put(message)
                     # asyncio.create_task(recognize(message))
-
-
-
-
-                await client.subscribe("+/stream/voice")
-                recognizer = KaldiRecognizer(model, args.sample_rate)
-                logging.info("+/stream/voice")
-                async for message in client.messages:
-                   
-                    if recognizer.AcceptWaveform(message.payload):
-                        transcribe = recognizer.Result()
-                        data = json.loads(transcribe)
-                        logging.info(data)
-
-
 
 
         except Exception as e:
