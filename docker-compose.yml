@@ -3,17 +3,17 @@ networks:
 
 services:
 
-  api_server:
-    build:
-      context: ./api_server
-    networks:
-      - dev
-    environment:
-      - DATABASE_URL=postgresql://@aazatserver.ru:5432/nutrition_db
-      - DATABASE_URL_async=postgresql+asyncpg://@aazatserver.ru:5432/nutrition_db
+  # api_server:
+  #   build:
+  #     context: ./api_server
+  #   networks:
+  #     - dev
+  #   environment:
+  #     - DATABASE_URL=postgresql://@aazatserver.ru:5432/nutrition_db
+  #     - DATABASE_URL_async=postgresql+asyncpg://@aazatserver.ru:5432/nutrition_db
 
-    volumes:
-      - ./SQL:/SQL
+  #   volumes:
+  #     - ./SQL:/SQL
 
   scale_server:
     build:
@@ -23,22 +23,28 @@ services:
     environment:
       - DATABASE_URL=postgresql://@aazatserver.ru:5432/nutrition_db
       - DATABASE_URL_async=postgresql+asyncpg://@aazatserver.ru:5432/nutrition_db
+      - PYTHONUNBUFFERED=1
     volumes:
       - ./SQL:/app/SQL
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     
-  nginx:
-    image: nginx:stable-alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - './nginx.conf:/etc/nginx/nginx.conf'
-      - '/etc/letsencrypt:/etc/letsencrypt'
-    depends_on:
-      - api_server
-      - scale_server
-    networks:
-      - dev
+  # nginx:
+  #   image: nginx:stable-alpine
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - './nginx.conf:/etc/nginx/nginx.conf'
+  #     - '/etc/letsencrypt:/etc/letsencrypt'
+  #   depends_on:
+  #     - api_server
+  #     - scale_server
+  #   networks:
+  #     - dev
 
   # backend:
   #   build:

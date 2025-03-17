@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 # .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{"name": "orange", "calories": 56}' -u "admin" -P "admin"
 # .\mosquitto_pub -h aazatserver.ru -t "iot/device1/weight" -m '{\"name\": \"orange\", \"calories\": 56}' -u "admin" -P "admin"
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 device_tasks = {}  # Словарь для хранения задач устройств
@@ -57,8 +57,8 @@ async def handle_device(client_id, message_queue):
             last_message_time = datetime.now(timezone.utc)  # Текущее время в UTC
             
             # Load configuration if provided
-            if isinstance(message, str) and 'config' in message:
-                jobj = json.loads(message)['config']
+            if isinstance(payload, str) and 'config' in payload:
+                jobj = json.loads(payload)['config']
                 logging.info("Config %s", jobj)
                 if 'phrase_list' in jobj:
                     phrase_list = jobj['phrase_list']
@@ -143,25 +143,30 @@ async def main():
     spk_model = SpkModel(args.spk_model_path) if args.spk_model_path else None
     pool = concurrent.futures.ThreadPoolExecutor((os.cpu_count() or 1))
 
-    async with aiomqtt.Client(
-        hostname="aazatserver.ru",
-        port=1883,
-        username="admin",
-        password="admin"
-    ) as client:
-        await client.subscribe("iot/+/audio")
-        logger.info("susubscribe to iot/+/audio")
-        async for message in client.messages:
-            # payload = json.loads(message.payload.decode())
-            # save_to_db(payload)
-            # logger.info(message.payload)
-            # client_id = message.topic.split("/")[-2]
-            client_id = str(message.topic).split("/")[-2]
-            if client_id not in device_tasks:
-                message_queue = asyncio.Queue()
-                device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
-            await message_queue.put(message)
-            # asyncio.create_task(recognize(message))
+    while True:
+        try:
+            async with aiomqtt.Client(
+                hostname="aazatserver.ru",
+                port=1883,
+                username="admin",
+                password="admin"
+            ) as client:
+                await client.subscribe("iot/+/audio")
+                logger.info("susubscribe to iot/+/audio")
+                async for message in client.messages:
+                    # payload = json.loads(message.payload.decode())
+                    # save_to_db(payload)
+                    # logger.info(message.payload)
+                    # client_id = message.topic.split("/")[-2]
+                    client_id = str(message.topic).split("/")[-2]
+                    if client_id not in device_tasks:
+                        message_queue = asyncio.Queue()
+                        device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
+                    await message_queue.put(message)
+                    # asyncio.create_task(recognize(message))
+        except Exception as e:
+            logger.exception(f"Ошибка MQTT-соединения: {e}")
+            await asyncio.sleep(5)  # Ждём перед повторным подключением
 
 
 asyncio.run(main())
