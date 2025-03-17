@@ -37,7 +37,6 @@ INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
-    logging.info(type(message))
     logging.info(message)
     try:
         if message == '{"eof" : 1}':
@@ -158,8 +157,12 @@ async def main():
     if len(sys.argv) > 1:
        args.model_path = sys.argv[1]
 
-       
-    model = Model(args.model_path)
+    try:
+        model = Model(args.model_path)
+        logging.info(f"Модель загружена успешно с пути: {model_path}")
+    except Exception as e:
+        logging.error(f"❌ Ошибка загрузки модели: {e}")
+        
     spk_model = SpkModel(args.spk_model_path) if args.spk_model_path else None
     pool = concurrent.futures.ThreadPoolExecutor((os.cpu_count() or 1))
 
