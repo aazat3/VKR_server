@@ -161,6 +161,7 @@ async def main():
         model = Model(args.model_path)
         logging.info(f"Модель загружена успешно с пути: {args.model_path}")
     except Exception as e:
+        logging.info(f"Неуд загрузка модели{args.model_path}")
         logging.error(f"❌ Ошибка загрузки модели: {e}")
         
     spk_model = SpkModel(args.spk_model_path) if args.spk_model_path else None
