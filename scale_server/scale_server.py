@@ -41,16 +41,18 @@ async def handle_device(client_id, message_queue, message):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
     logging.info(f"✅ Начало обработки устройства {client_id}")
     
+    global model
+    global spk_model
+    global args
+    global pool
+    
     recognizer = KaldiRecognizer(model, args.sample_rate)
     if recognizer.AcceptWaveform(message):
                             transcribe = recognizer.Result()
                             data = json.loads(transcribe)
                             logging.info(data)
 
-    # global model
-    # global spk_model
-    # global args
-    # global pool
+
 
     # loop = asyncio.get_running_loop()
     # rec = None
