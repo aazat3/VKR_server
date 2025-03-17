@@ -122,6 +122,7 @@ async def handle_device(client_id, message_queue):
 #         # crud.create_product(db, product)
 
 
+
 async def main():
     global model
     global spk_model
@@ -156,6 +157,7 @@ async def main():
                 username="admin",
                 password="admin"
             ) as client:
+                
                 await client.subscribe("iot/+/audio")
                 logging.info("susubscribe to iot/+/audio")
                 async for message in client.messages:
@@ -166,6 +168,22 @@ async def main():
                         device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
                     await message_queue.put(message)
                     # asyncio.create_task(recognize(message))
+
+
+
+
+                await client.subscribe("+/stream/voice")
+                logging.info("+/stream/voice")
+                async for message in client.messages:
+                    recognizer = KaldiRecognizer(args.model, args.sample_rate)
+                    if recognizer.AcceptWaveform(message.payload):
+                        transcribe = recognizer.Result()
+                        data = json.loads(transcribe)
+                        logging.info(data)
+
+
+
+
         except Exception as e:
             logging.exception(f"Ошибка MQTT-соединения: {e}")
             await asyncio.sleep(5)  # Ждём перед повторным подключением
