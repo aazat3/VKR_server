@@ -100,9 +100,9 @@ async def handle_device(client_id, message_queue):
                     rec.SetSpkModel(spk_model)
 
             response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
-            logging.info(response)
+            # logging.info(response)
             # if stop: break
-            # await loop.run_in_executor(pool, process_chunk, rec, payload)
+            await loop.run_in_executor(pool, process_chunk, rec, payload)
 
 
             # if rec.AcceptWaveform(payload):
