@@ -8,15 +8,9 @@ RUN pip install -r requirements.txt
 COPY . /app
 WORKDIR /app
 
-# Скрипт для скачивания модели при необходимости
-RUN mkdir -p /opt/vosk-model-ru
-RUN apt-get update && apt-get install -y wget unzip
-
-COPY download_model.sh /opt/vosk-model-ru/download_model.sh
-RUN chmod +x /opt/vosk-model-ru/download_model.sh
 
 # Устанавливаем переменную окружения для отключения буферизации вывода
 ENV PYTHONUNBUFFERED=1
 
-# Собираем команду для скачивания модели и старта сервера
-CMD /opt/vosk-model-ru/download_model.sh && python scale_server.py /opt/vosk-model-ru/model
+
+CMD [ "python", "api_server.py" ]

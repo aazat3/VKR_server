@@ -159,7 +159,7 @@ async def main():
 
     try:
         model = Model(args.model_path)
-        logging.info(f"Модель загружена успешно с пути: {model_path}")
+        logging.info(f"Модель загружена успешно с пути: {args.model_path}")
     except Exception as e:
         logging.error(f"❌ Ошибка загрузки модели: {e}")
         
