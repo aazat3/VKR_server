@@ -167,7 +167,7 @@ async def main():
                         logging.info("New device")
                         message_queue = asyncio.Queue()
                         device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
-                    await message_queue.put(message)
+                    await message_queue.put(message.payload.decode())
                     # asyncio.create_task(recognize(message))
         except Exception as e:
             logging.exception(f"Ошибка MQTT-соединения: {e}")
