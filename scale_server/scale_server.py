@@ -37,18 +37,23 @@ INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
-    if message == '{"eof" : 1}':
-        return rec.FinalResult(), True
-    logging.info(f"Не вариант 1")
-    if message == '{"reset" : 1}':
-        logging.info(f"вариант 2")
-        return rec.FinalResult(), False
-    elif rec.AcceptWaveform(message):
-        logging.info(f"вариант 3")
-        return rec.Result(), False
-    else:
-        logging.info(f"вариант 4")
-        return rec.PartialResult(), False
+
+    try:
+        if message == '{"eof" : 1}':
+            return rec.FinalResult(), True
+        logging.info(f"Не вариант 1")
+        if message == '{"reset" : 1}':
+            logging.info(f"вариант 2")
+            return rec.FinalResult(), False
+        elif rec.AcceptWaveform(message):
+            logging.info(f"вариант 3")
+            return rec.Result(), False
+        else:
+            logging.info(f"вариант 4")
+            return rec.PartialResult(), False
+    except Exception as e:
+        logging.error(f"❌ Ошибка обработки аудио: {e}")
+        return '{"error": "processing error"}', False
     
     
 
@@ -94,14 +99,12 @@ async def handle_device(client_id, message_queue):
 
             # Create the recognizer, word list is temporary disabled since not every model supports it
             if not rec or model_changed:
-                logging.info("Create rec_model")
                 model_changed = False
                 if phrase_list:
                     rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
-                    logging.info("Created rec_model")
                 else:
                     rec = KaldiRecognizer(model, sample_rate)
-                    logging.info("Created rec_model")
+                    logging.info(sample_rate)
                 rec.SetWords(show_words)
                 rec.SetMaxAlternatives(max_alternatives)
                 if spk_model:
