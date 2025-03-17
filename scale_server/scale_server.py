@@ -166,7 +166,7 @@ async def main():
                     payload = message.payload
                     client_id = str(message.topic).split("/")[-2]
                     logging.info(topic)
-                    if topic.endswith('/voice'):
+                    if str(topic).endswith('/voice'):
                         if recognizer.AcceptWaveform(payload):
                             transcribe = recognizer.Result()
                             data = json.loads(transcribe)
