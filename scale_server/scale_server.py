@@ -20,11 +20,27 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s -
 device_tasks = {}  # Словарь для хранения задач устройств
 INACTIVITY_TIMEOUT = 30
 
+# def process_chunk(rec, message):
+#     logging.info(f"✅ обработка аудио")
+#     if message == '{"eof" : 1}':
+#         logging.info(f"вариант 1")
+#         return rec.FinalResult(), True
+#     if message == '{"reset" : 1}':
+#         logging.info(f"вариант 2")
+#         return rec.FinalResult(), False
+#     elif rec.AcceptWaveform(message):
+#         logging.info(f"вариант 3")
+#         return rec.Result(), False
+#     else:
+#         logging.info(f"вариант 4")
+#         return rec.PartialResult(), False
+
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
     if message == '{"eof" : 1}':
         logging.info(f"вариант 1")
         return rec.FinalResult(), True
+    logging.info(f"Не вариант 1")
     if message == '{"reset" : 1}':
         logging.info(f"вариант 2")
         return rec.FinalResult(), False
