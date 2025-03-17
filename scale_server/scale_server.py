@@ -42,7 +42,7 @@ def process_chunk(rec, payload):
             transcribe = rec.Result()
             data = json.loads(transcribe)
             logging.info(data)
-            return data, False
+            # return data, False
     except Exception as e:
             logging.error(f"❌ Ошибка обработки аудио: {e}")
             return '{"error": "processing error"}', False
