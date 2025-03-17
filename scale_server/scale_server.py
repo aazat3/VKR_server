@@ -37,13 +37,14 @@ INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
+    logging.info(type(message))
     logging.info(message)
     try:
         if message == '{"eof" : 1}':
             return rec.FinalResult(), True
         if message == '{"reset" : 1}':
             return rec.FinalResult(), False
-        elif rec.AcceptWaveform(message):
+        if rec.AcceptWaveform(message):
             logging.info(f"вариант 3")
             return rec.Result(), False
         else:
