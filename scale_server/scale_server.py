@@ -52,7 +52,6 @@ async def handle_device(client_id, message_queue):
     while True:
         try:
             message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
-            logging.info(message.payload)
             if recognizer.AcceptWaveform(message.payload):
                 transcribe = recognizer.Result()
                 data = json.loads(transcribe)
