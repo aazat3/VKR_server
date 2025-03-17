@@ -173,7 +173,6 @@ async def main():
 
 
                 await client.subscribe("+/stream/voice")
-                model = Model(args.model_path)
                 recognizer = KaldiRecognizer(model, args.sample_rate)
                 logging.info("+/stream/voice")
                 async for message in client.messages:
