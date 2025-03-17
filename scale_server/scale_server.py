@@ -137,8 +137,8 @@ async def main():
     args.max_alternatives = int(os.environ.get('VOSK_ALTERNATIVES', 0))
     args.show_words = bool(os.environ.get('VOSK_SHOW_WORDS', True))
 
-    if len(sys.argv) > 1:
-       args.model_path = sys.argv[1]
+    # if len(sys.argv) > 1:
+    #    args.model_path = sys.argv[1]
 
     try:
         model = Model(args.model_path)
@@ -173,10 +173,11 @@ async def main():
 
 
                 await client.subscribe("+/stream/voice")
+                model = Model(args.model_path)
+                recognizer = KaldiRecognizer(model, args.sample_rate)
                 logging.info("+/stream/voice")
                 async for message in client.messages:
-                    model = Model(args.model_path)
-                    recognizer = KaldiRecognizer(model, args.sample_rate)
+                   
                     if recognizer.AcceptWaveform(message.payload):
                         transcribe = recognizer.Result()
                         data = json.loads(transcribe)
