@@ -37,7 +37,6 @@ INACTIVITY_TIMEOUT = 30
     
 
 def process_chunk(rec, payload):
-    logging.info(f"✅ обработка аудио")
     if rec.AcceptWaveform(payload):
         transcribe = rec.Result()
         data = json.loads(transcribe)
