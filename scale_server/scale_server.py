@@ -39,8 +39,8 @@ def process_chunk(rec, message):
     logging.info(f"✅ обработка аудио")
     
     try:
-        check = rec.AcceptWaveform(message)
-        logging.info(check)
+        rec.AcceptWaveform(message)
+        logging.info(rec.Result())
 
     except Exception as e:
         logging.error(f"❌ Ошибка обработки аудио: {e}")
