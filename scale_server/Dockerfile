@@ -19,4 +19,4 @@ RUN chmod +x /opt/vosk-model-ru/download_model.sh
 ENV PYTHONUNBUFFERED=1
 
 # Собираем команду для скачивания модели и старта сервера
-CMD /opt/vosk-model-ru/download_model.sh && python scale_server.py /opt/vosk-model-ru/model
+CMD /opt/vosk-model-ru/download_model.sh && python test_scale_server.py /opt/vosk-model-ru/model
