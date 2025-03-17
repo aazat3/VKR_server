@@ -158,19 +158,16 @@ async def main():
                 password="admin"
             ) as client:
                 
-                # await client.subscribe("iot/+/audio")
-                # logging.info("susubscribe to iot/+/audio")
-                # async for message in client.messages:
-                #     client_id = str(message.topic).split("/")[-2]
-                #     if client_id not in device_tasks:
-                #         logging.info("New device")
-                #         message_queue = asyncio.Queue()
-                #         device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
-                #     await message_queue.put(message)
-                #     # asyncio.create_task(recognize(message))
-
-
-
+                await client.subscribe("iot/+/audio")
+                logging.info("susubscribe to iot/+/audio")
+                async for message in client.messages:
+                    client_id = str(message.topic).split("/")[-2]
+                    if client_id not in device_tasks:
+                        logging.info("New device")
+                        message_queue = asyncio.Queue()
+                        device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
+                    await message_queue.put(message)
+                    # asyncio.create_task(recognize(message))
 
                 await client.subscribe("+/stream/voice")
                 recognizer = KaldiRecognizer(model, args.sample_rate)
