@@ -17,25 +17,32 @@ device_tasks = {}  # Словарь для хранения задач устр�
 INACTIVITY_TIMEOUT = 30
 
 
-def process_chunk(rec, message):
+# def process_chunk(rec, message):
+#     logging.info(f"✅ обработка аудио")
+    
+#     try:
+#         if message == '{"eof" : 1}':
+#             return rec.FinalResult(), True
+#         if message == '{"reset" : 1}':
+#             return rec.FinalResult(), False
+#         if rec.AcceptWaveform(message):
+#             logging.info(f"вариант 3")
+#             return rec.Result(), False
+#         else:
+#             logging.info(f"вариант 4")
+#             return rec.PartialResult(), False
+#     except Exception as e:
+#         logging.error(f"❌ Ошибка обработки аудио: {e}")
+#         return '{"error": "processing error"}', False
+    
+
+def process_chunk(rec, payload):
     logging.info(f"✅ обработка аудио")
-    
-    try:
-        if message == '{"eof" : 1}':
-            return rec.FinalResult(), True
-        if message == '{"reset" : 1}':
-            return rec.FinalResult(), False
-        if rec.AcceptWaveform(message):
-            logging.info(f"вариант 3")
-            return rec.Result(), False
-        else:
-            logging.info(f"вариант 4")
-            return rec.PartialResult(), False
-    except Exception as e:
-        logging.error(f"❌ Ошибка обработки аудио: {e}")
-        return '{"error": "processing error"}', False
-    
-    
+    if rec.AcceptWaveform(payload):
+        transcribe = rec.Result()
+        data = json.loads(transcribe)
+        logging.info(data)
+
 
 async def handle_device(client_id, message_queue):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
@@ -52,8 +59,6 @@ async def handle_device(client_id, message_queue):
     sample_rate = args.sample_rate
     show_words = args.show_words
     max_alternatives = args.max_alternatives
-
-    recognizer = KaldiRecognizer(model, args.sample_rate)
 
     while True:
         try:
@@ -91,10 +96,16 @@ async def handle_device(client_id, message_queue):
                 if spk_model:
                     rec.SetSpkModel(spk_model)
 
-            if rec.AcceptWaveform(message.payload):
-                transcribe = rec.Result()
-                data = json.loads(transcribe)
-                logging.info(data)
+            # response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
+            # logging.info(response)
+            # if stop: break
+            await loop.run_in_executor(pool, process_chunk, rec, payload)
+
+
+            # if rec.AcceptWaveform(payload):
+            #     transcribe = rec.Result()
+            #     data = json.loads(transcribe)
+            #     logging.info(data)
 
         except asyncio.TimeoutError:
             # Если прошло слишком много времени без сообщений — завершаем задачу
@@ -105,57 +116,6 @@ async def handle_device(client_id, message_queue):
     del device_tasks[client_id]
     del message_queue  # Явно удаляем очередь (необязательно, но можно)
     logging.info(f"🛑 Задача {client_id} завершена")
-
-
-    # while True:
-    #     try:
-    #         # Ждём новое сообщение с тайм-аутом
-    #         message = await asyncio.wait_for(message_queue.get(), timeout=INACTIVITY_TIMEOUT)
-    #         payload = message.payload
-    #         last_message_time = datetime.now(timezone.utc)  # Текущее время в UTC
-            
-    #         # Load configuration if provided
-    #         if isinstance(payload, str) and 'config' in payload:
-    #             jobj = json.loads(payload)['config']
-    #             logging.info("Config %s", jobj)
-    #             if 'phrase_list' in jobj:
-    #                 phrase_list = jobj['phrase_list']
-    #             if 'sample_rate' in jobj:
-    #                 sample_rate = float(jobj['sample_rate'])
-    #             if 'model' in jobj:
-    #                 model = Model(jobj['model'])
-    #                 model_changed = True
-    #             if 'words' in jobj:
-    #                 show_words = bool(jobj['words'])
-    #             if 'max_alternatives' in jobj:
-    #                 max_alternatives = int(jobj['max_alternatives'])
-    #             continue
-
-    #         # Create the recognizer, word list is temporary disabled since not every model supports it
-    #         if not rec or model_changed:
-    #             model_changed = False
-    #             if phrase_list:
-    #                 rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
-    #             else:
-    #                 rec = KaldiRecognizer(model, sample_rate)
-    #             rec.SetWords(show_words)
-    #             rec.SetMaxAlternatives(max_alternatives)
-    #             if spk_model:
-    #                 rec.SetSpkModel(spk_model)
-
-    #         response, stop = await loop.run_in_executor(pool, process_chunk, rec, payload)
-    #         logging.info(response)
-    #         if stop: break
-
-    #     except asyncio.TimeoutError:
-    #         # Если прошло слишком много времени без сообщений — завершаем задачу
-    #         logging.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
-    #         break
-
-    # # Очистка после завершения
-    # del device_tasks[client_id]
-    # del message_queue  # Явно удаляем очередь (необязательно, но можно)
-    # logging.info(f"🛑 Задача {client_id} завершена")
 
 
 # def save_to_db(payload):
