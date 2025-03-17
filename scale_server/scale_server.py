@@ -132,7 +132,7 @@ async def main():
     args = type('', (), {})()
 
     args.model_path = os.environ.get('VOSK_MODEL_PATH', 'model')
-    args.spk_model_path = os.environ.get('VOSK_SPK_MODEL_PATH')
+    args.spk_model_path = os.environ.get('VOSK_MODEL_PATH2')
     args.sample_rate = float(os.environ.get('VOSK_SAMPLE_RATE', 16000))
     args.max_alternatives = int(os.environ.get('VOSK_ALTERNATIVES', 0))
     args.show_words = bool(os.environ.get('VOSK_SHOW_WORDS', True))
