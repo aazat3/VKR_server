@@ -19,7 +19,7 @@ INACTIVITY_TIMEOUT = 30
 
 def process_chunk(rec, payload):    
     try:
-        logging.info(payload)
+        # logging.info(payload)
         if payload == '{"eof" : 1}':
             return rec.FinalResult(), True
         if payload == '{"reset" : 1}':
@@ -88,7 +88,7 @@ async def handle_device(client_id, message_queue):
 
             response = await loop.run_in_executor(pool, process_chunk, rec, payload)
 
-            # logging.info(response[0])
+            logging.info(response[0])
             if response[1]: break
 
         except asyncio.TimeoutError:
