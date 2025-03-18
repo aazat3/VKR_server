@@ -25,7 +25,6 @@ def process_chunk(rec, payload):
         if payload == '{"reset" : 1}':
             return rec.FinalResult(), False
         if rec.AcceptWaveform(payload):
-            logging.info(rec.Result())
             return rec.Result(), False
         else:
             return rec.PartialResult(), False
