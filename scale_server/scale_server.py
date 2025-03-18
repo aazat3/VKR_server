@@ -25,6 +25,7 @@ def process_chunk(rec, payload):
         if payload == '{"reset" : 1}':
             return rec.FinalResult(), False
         if rec.AcceptWaveform(payload):
+            logging.info(rec.Result())
             return rec.Result(), False
         else:
             return rec.PartialResult(), False
@@ -87,7 +88,7 @@ async def handle_device(client_id, message_queue):
 
             response = await loop.run_in_executor(pool, process_chunk, rec, payload)
 
-            logging.info(response[0])
+            # logging.info(response[0])
             if response[1]: break
 
         except asyncio.TimeoutError:
