@@ -89,11 +89,11 @@ async def handle_device(client_id, message_queue):
                 if spk_model:
                     rec.SetSpkModel(spk_model)
 
-            response = await loop.run_in_executor(pool, process_chunk, rec, payload)
+            # response = await loop.run_in_executor(pool, process_chunk, rec, payload)
             audio_data.extend(payload)
 
             # logging.info(response[0])
-            if response[1]: break
+            # if response[1]: break
 
         except asyncio.TimeoutError:
             # Если прошло слишком много времени без сообщений — завершаем задачу
@@ -113,8 +113,8 @@ def save_wav(data):
     # Открываем WAV файл на запись
     with wave.open("received_audio.wav", "wb") as wf:
         wf.setnchannels(1)  # Моно
-        wf.setsampwidth(2)  # 16 бит (2 байта)
-        wf.setframerate(16000)  # Частота дискретизации 16 кГц
+        wf.setsampwidth(8)  # 16 бит (2 байта)
+        wf.setframerate(5000)  # Частота дискретизации 16 кГц
 
         # Распаковываем данные из bytearray в 16-битные выборки
         num_samples = len(data) // 2  # Количество 16-битных выборок
