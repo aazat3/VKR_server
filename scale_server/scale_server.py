@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 import json
 from SQL import database, models, schemas, crud
 from vosk import Model, SpkModel, KaldiRecognizer
+import wave
+import struct
 import concurrent.futures
 import os
 import sys
@@ -14,7 +16,7 @@ from datetime import datetime, timezone
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 device_tasks = {}  # Словарь для хранения задач устройств
-INACTIVITY_TIMEOUT = 30
+INACTIVITY_TIMEOUT = 7
 
 
 def process_chunk(rec, payload):    
@@ -49,6 +51,7 @@ async def handle_device(client_id, message_queue):
     sample_rate = args.sample_rate
     show_words = args.show_words
     max_alternatives = args.max_alternatives
+    audio_data = bytearray()
 
     while True:
         try:
@@ -87,6 +90,7 @@ async def handle_device(client_id, message_queue):
                     rec.SetSpkModel(spk_model)
 
             response = await loop.run_in_executor(pool, process_chunk, rec, payload)
+            audio_data.extend(payload)
 
             # logging.info(response[0])
             if response[1]: break
@@ -94,12 +98,32 @@ async def handle_device(client_id, message_queue):
         except asyncio.TimeoutError:
             # Если прошло слишком много времени без сообщений — завершаем задачу
             logging.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
+            save_wav(audio_data)
+            audio_data.clear()  # Очищаем массив данных после записи в WAV
             break
 
     # Очистка после завершения
     del device_tasks[client_id]
     del message_queue  # Явно удаляем очередь (необязательно, но можно)
     logging.info(f"🛑 Задача {client_id} завершена")
+
+
+# Функция для сохранения аудиоданных в WAV
+def save_wav(data):
+    # Открываем WAV файл на запись
+    with wave.open("received_audio.wav", "wb") as wf:
+        wf.setnchannels(1)  # Моно
+        wf.setsampwidth(2)  # 16 бит (2 байта)
+        wf.setframerate(16000)  # Частота дискретизации 16 кГц
+
+        # Распаковываем данные из bytearray в 16-битные выборки
+        num_samples = len(data) // 2  # Количество 16-битных выборок
+        samples = struct.unpack("<" + "h" * num_samples, data)  # Преобразуем в 16-битные значения
+
+        # Записываем выборки в WAV файл
+        wf.writeframes(struct.pack("<" + "h" * num_samples, *samples))
+
+    print("Аудиофайл сохранен как 'received_audio.wav'")
 
 
 # def save_to_db(payload):
