@@ -1,6 +1,6 @@
 import asyncio
 import aiomqtt
-import logging 
+import logging
 from sqlalchemy.orm import Session
 import json
 from SQL import database, models, schemas, crud
@@ -81,9 +81,9 @@ async def handle_device(client_id, message_queue):
             if not rec or model_changed:
                 model_changed = False
                 if phrase_list:
-                    rec = KaldiRecognizer(model, 8000, json.dumps(phrase_list, ensure_ascii=False))
+                    rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
                 else:
-                    rec = KaldiRecognizer(model, 8000)
+                    rec = KaldiRecognizer(model, sample_rate)
                 rec.SetWords(show_words)
                 rec.SetMaxAlternatives(max_alternatives)
                 if spk_model:
