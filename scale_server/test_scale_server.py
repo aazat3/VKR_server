@@ -23,48 +23,45 @@ print(f"🎙️  Приём аудио на {UDP_IP}:{UDP_PORT}...")
 try:
     packet_count = 0
     audio_data = bytearray()
-    
 
-    
     while True:
-        # ==== СОЗДАЁМ WAV-ФАЙЛ ====
-        filename = f"received_audio.wav"  # Имя файла с меткой времени
+        # ==== СТАРТ ЗАПИСИ ====
+        print("🔴 Начинаем запись... 10 секунд")
+        
+        # Создаём WAV-файл без метки времени
+        filename = "udp_audio.wav"
         wav_file = wave.open(filename, "wb")
         wav_file.setnchannels(CHANNELS)
         wav_file.setsampwidth(SAMPLE_WIDTH)
         wav_file.setframerate(SAMPLE_RATE)
 
-        # Начальное время
+        # Принимаем данные за 10 секунд
         start_time = time.time()
+        while time.time() - start_time < 10:
+            data, addr = sock.recvfrom(PACKET_SIZE)  # Получаем данные
+            packet_count += 1
 
-        
-        data, addr = sock.recvfrom(PACKET_SIZE)  # Получаем данные
-        packet_count += 1
+            # Добавляем принятые данные в буфер
+            audio_data.extend(data)
 
-        # Добавляем принятые данные в буфер
-        audio_data.extend(data)
-            
-        # Если прошло 10 секунд — сохраняем данные и ждём 5 секунд
-        if time.time() - start_time >= 10:
-            # Записываем аудиофайл
-            wav_file.writeframes(audio_data)
-            print(f"✅ Записано 10 секунд аудио ({len(audio_data)} байт) в файл.")
-            print(f"📦 Получено пакетов: {packet_count}  ({len(audio_data)} байт)")
-            audio_data.clear()  # Очищаем буфер
-            wav_file.close()
-            packet_count = 0
+        # Записываем полученные данные в WAV
+        wav_file.writeframes(audio_data)
+        print(f"📦 Получено пакетов: {packet_count}  ({len(audio_data)} байт)")
 
+        # Закрываем текущий WAV файл
+        wav_file.close()
 
-            # Ожидаем 5 секунд
-            print("⏳ Ожидание 5 секунд...")
-            time.sleep(5)
+        # ==== ОЖИДАНИЕ 5 СЕКУНД ====
+        print("⏳ Ожидаем 5 секунд...")
+        time.sleep(5)
 
-            # Обновляем стартовое время для следующего блока
-            start_time = time.time()
+        # Очищаем буфер для следующей записи
+        audio_data.clear()
+        packet_count = 0
 
 except KeyboardInterrupt:
     print("\n❌ Остановка сервера...")
 
 finally:
     sock.close()
-    print(f"✅ Файл сохранён: {filename}")
+    print("✅ Сервер завершил работу.")
