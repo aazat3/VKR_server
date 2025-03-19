@@ -48,7 +48,6 @@ try:
             print(f"✅ Записано 10 секунд аудио ({len(audio_data)} байт) в файл.")
             print(f"📦 Получено пакетов: {packet_count}  ({len(audio_data)} байт)")
             audio_data.clear()  # Очищаем буфер
-            wav_file.close()
             packet_count = 0
 
 
@@ -64,6 +63,8 @@ except KeyboardInterrupt:
 
 finally:
     sock.close()
+    wav_file.close()
+
     print(f"✅ Файл сохранён: {filename}")
 
 
