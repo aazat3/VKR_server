@@ -1,6 +1,6 @@
 import asyncio
 import aiomqtt
-import logging
+import logging 
 from sqlalchemy.orm import Session
 import json
 from SQL import database, models, schemas, crud
@@ -21,7 +21,7 @@ INACTIVITY_TIMEOUT = 7
 
 def process_chunk(rec, payload):    
     try:
-        logging.info(payload)
+        # logging.info(payload)
         if payload == '{"eof" : 1}':
             return rec.FinalResult(), True
         if payload == '{"reset" : 1}':
@@ -81,9 +81,9 @@ async def handle_device(client_id, message_queue):
             if not rec or model_changed:
                 model_changed = False
                 if phrase_list:
-                    rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
+                    rec = KaldiRecognizer(model, 8000, json.dumps(phrase_list, ensure_ascii=False))
                 else:
-                    rec = KaldiRecognizer(model, sample_rate)
+                    rec = KaldiRecognizer(model, 8000)
                 rec.SetWords(show_words)
                 rec.SetMaxAlternatives(max_alternatives)
                 if spk_model:
