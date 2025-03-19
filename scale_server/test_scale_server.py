@@ -9,20 +9,13 @@ UDP_PORT = 5005     # Порт (должен совпадать с ESP8266)
 PACKET_SIZE = 256   # Размер пакета (128 сэмплов * 2 байта)
 
 # ==== ПАРАМЕТРЫ АУДИО ====
-SAMPLE_RATE = 16000  # Частота дискретизации 16 кГц
+SAMPLE_RATE = 8000  # Частота дискретизации 16 кГц
 SAMPLE_WIDTH = 2     # 16 бит (2 байта)
 CHANNELS = 1         # Моно
 
 # ==== СОЗДАЁМ UDP-СОКЕТ ====
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
-
-# ==== СОЗДАЁМ WAV-ФАЙЛ ====
-filename = f"received_audio.wav"  # Имя файла с меткой времени
-wav_file = wave.open(filename, "wb")
-wav_file.setnchannels(CHANNELS)
-wav_file.setsampwidth(SAMPLE_WIDTH)
-wav_file.setframerate(SAMPLE_RATE)
 
 print(f"🎙️  Приём аудио на {UDP_IP}:{UDP_PORT}...")
 
@@ -33,6 +26,13 @@ try:
     
     # Начальное время
     start_time = time.time()
+
+    # ==== СОЗДАЁМ WAV-ФАЙЛ ====
+    filename = f"received_audio.wav"  # Имя файла с меткой времени
+    wav_file = wave.open(filename, "wb")
+    wav_file.setnchannels(CHANNELS)
+    wav_file.setsampwidth(SAMPLE_WIDTH)
+    wav_file.setframerate(SAMPLE_RATE)
 
     while True:
         data, addr = sock.recvfrom(PACKET_SIZE)  # Получаем данные
@@ -55,7 +55,7 @@ try:
             # Ожидаем 5 секунд
             print("⏳ Ожидание 5 секунд...")
             time.sleep(5)
-
+            
             # Обновляем стартовое время для следующего блока
             start_time = time.time()
 
