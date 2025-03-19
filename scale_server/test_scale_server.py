@@ -31,8 +31,9 @@ try:
         wav_file.setnchannels(CHANNELS)
         wav_file.setsampwidth(SAMPLE_WIDTH)
         wav_file.setframerate(SAMPLE_RATE)
-
+        print("aaaa")
         data, addr = sock.recvfrom(PACKET_SIZE)  # Получаем данные
+        print("bbbbb")
         # Начальное время
         start_time = time.time()
         packet_count += 1
