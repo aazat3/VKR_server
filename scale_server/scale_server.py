@@ -113,8 +113,8 @@ def save_wav(data):
     # Открываем WAV файл на запись
     with wave.open("received_audio.wav", "wb") as wf:
         wf.setnchannels(1)  # Моно
-        wf.setsampwidth(2)  # 16 бит (2 байта)
-        wf.setframerate(16000)  # Частота дискретизации 16 кГц
+        wf.setsampwidth(1)  # 16 бит (2 байта)
+        wf.setframerate(8000)  # Частота дискретизации 16 кГц
 
         # Распаковываем данные из bytearray в 16-битные выборки
         num_samples = len(data) // 2  # Количество 16-битных выборок
