@@ -1,71 +1,55 @@
-#!/usr/bin/env python3
+import socket
+import wave
+import struct
 
-from os import environ
-import json
-import paho.mqtt.client as mqtt
-from vosk import Model, KaldiRecognizer
-from dotenv import load_dotenv
+# ==== ПАРАМЕТРЫ UDP ====
+UDP_IP = "0.0.0.0"  # Принимаем данные от всех
+UDP_PORT = 5005     # Порт (должен совпадать с ESP8266)
+PACKET_SIZE = 256   # Размер пакета (128 сэмплов * 2 байта)
 
-load_dotenv()
+# ==== ПАРАМЕТРЫ АУДИО ====
+SAMPLE_RATE = 16000  # Частота дискретизации 16 кГц
+SAMPLE_WIDTH = 2     # 16 бит (2 байта)
+CHANNELS = 1         # Моно
 
-class VoskMqttServer():
-    def __init__(self):
-        self.pid = environ.get('PID')
-        self.mqtt_address = environ.get('MQTT_ADDRESS')
-        self.mqtt_username = environ.get('MQTT_USERNAME')
-        self.mqtt_password = environ.get('MQTT_PASSWORD')
-        self.vosk_lang = environ.get('VOSK_LANG')
-        self.sample_rate = float(environ.get('VOSK_SAMPLE_RATE'))
+# ==== СОЗДАЁМ UDP-СОКЕТ ====
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((UDP_IP, UDP_PORT))
 
-        self.__init_kaldi_recognizer(self.__get_model_path(self.vosk_lang))
-        self.__init_mqtt_client()
+# ==== СОЗДАЁМ WAV-ФАЙЛ ====
+filename = f"received_audio.wav"  # Имя файла с меткой времени
+wav_file = wave.open(filename, "wb")
+wav_file.setnchannels(CHANNELS)
+wav_file.setsampwidth(SAMPLE_WIDTH)
+wav_file.setframerate(SAMPLE_RATE)
 
-    def run(self):
-        self.client.connect(self.mqtt_address)
-        self.client.loop_forever()
+print(f"🎙️  Приём аудио на {UDP_IP}:{UDP_PORT}...")
 
-    def __on_mqtt_connect(self, client, obj, flags, rc):
-        print('Connected to mqtt server')
-        self.client.subscribe(self.pid + '/lang')
-        self.client.subscribe(self.pid + '/stream/voice')
-        self.client.subscribe(self.pid + '/stop')
+# ==== ГЛАВНЫЙ ЦИКЛ ====
+try:
+    packet_count = 0
+    audio_data = bytearray()
 
-    def __on_mqtt_message(self, client, obj, msg):
+    while True:
+        data, addr = sock.recvfrom(PACKET_SIZE)  # Получаем данные
+        packet_count += 1
 
-        if msg.topic.endswith('/lang'):
-            self.__init_kaldi_recognizer(self.__get_model_path(msg.payload.decode('utf-8')))
+        # Добавляем принятые данные в буфер
+        audio_data.extend(data)
 
-        elif msg.topic.endswith('/stop'):
-            transcribe = self.recognizer.FinalResult()
-            data = json.loads(transcribe)
-            print(data)
-            if data and data['text']:
-                self.client.publish(self.pid + '/finalTranscribe', str(data))
-            print('Disconnecting...')
-            self.client.disconnect()
+        # Каждые 100 пакетов (~0.8 сек) записываем в WAV
+        if packet_count % 100 == 0:
+            wav_file.writeframes(audio_data)  # Записываем в файл
+            print(f"📦 Получено пакетов: {packet_count}  ({len(audio_data)} байт)")
+            audio_data.clear()  # Очищаем буфер
 
-        elif msg.topic.endswith('/voice'):
-            if self.recognizer.AcceptWaveform(msg.payload):
-                transcribe = self.recognizer.Result()
-                data = json.loads(transcribe)
-                print(data)
-                if data and data['text']:
-                    self.client.publish(self.pid + '/finalTranscribe', str(data))
+except KeyboardInterrupt:
+    print("\n❌ Остановка сервера...")
 
-    def __get_model_path(self, lang='ru'):
-        return environ.get('VOSK_MODEL_PATH', 'model')
-
-    def __init_kaldi_recognizer(self, model_path='model-ru'):
-        self.model = Model(model_path)
-        self.recognizer = KaldiRecognizer(self.model, self.sample_rate)
-
-    def __init_mqtt_client(self):
-        self.client = mqtt.Client()
-        self.client.username_pw_set(self.mqtt_username, self.mqtt_password)
-        self.client.on_connect = self.__on_mqtt_connect
-        self.client.on_message = self.__on_mqtt_message
-
-
-if __name__ == "__main__":
-    server = VoskMqttServer()
-    server.run()
+finally:
+    # Сохраняем финальные данные и закрываем файл
+    if audio_data:
+        wav_file.writeframes(audio_data)
+    wav_file.close()
+    sock.close()
+    print(f"✅ Файл сохранён: {filename}")

@@ -20,7 +20,8 @@ services:
       context: ./scale_server
     networks:
       - dev
-
+    ports:
+      - "5005:5005/udp"
     environment:
       - PID=32452345
       - VOSK_LANG=ru
