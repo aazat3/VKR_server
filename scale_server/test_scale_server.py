@@ -23,20 +23,20 @@ print(f"🎙️  Приём аудио на {UDP_IP}:{UDP_PORT}...")
 try:
     packet_count = 0
     audio_data = bytearray()
-    
-    # Начальное время
-    start_time = time.time()
-
-    # ==== СОЗДАЁМ WAV-ФАЙЛ ====
-    filename = f"received_audio.wav"  # Имя файла с меткой времени
-    wav_file = wave.open(filename, "wb")
-    wav_file.setnchannels(CHANNELS)
-    wav_file.setsampwidth(SAMPLE_WIDTH)
-    wav_file.setframerate(SAMPLE_RATE)
 
     while True:
         data, addr = sock.recvfrom(PACKET_SIZE)  # Получаем данные
         packet_count += 1
+
+        # Начальное время
+        start_time = time.time()
+
+        # ==== СОЗДАЁМ WAV-ФАЙЛ ====
+        filename = f"received_audio.wav"  # Имя файла с меткой времени
+        wav_file = wave.open(filename, "wb")
+        wav_file.setnchannels(CHANNELS)
+        wav_file.setsampwidth(SAMPLE_WIDTH)
+        wav_file.setframerate(SAMPLE_RATE)
 
         # Добавляем принятые данные в буфер
         audio_data.extend(data)
