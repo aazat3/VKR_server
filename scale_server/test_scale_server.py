@@ -29,7 +29,7 @@ try:
         print("🔴 Начинаем запись... 10 секунд")
         
         # Создаём WAV-файл без метки времени
-        filename = "udp_audio.wav"
+        filename = "received_audio.wav"
         wav_file = wave.open(filename, "wb")
         wav_file.setnchannels(CHANNELS)
         wav_file.setsampwidth(SAMPLE_WIDTH)
