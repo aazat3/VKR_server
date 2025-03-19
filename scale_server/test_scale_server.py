@@ -24,17 +24,20 @@ try:
     packet_count = 0
     audio_data = bytearray()
     
-    # Начальное время
-    start_time = time.time()
 
-    # ==== СОЗДАЁМ WAV-ФАЙЛ ====
-    filename = f"received_audio.wav"  # Имя файла с меткой времени
-    wav_file = wave.open(filename, "wb")
-    wav_file.setnchannels(CHANNELS)
-    wav_file.setsampwidth(SAMPLE_WIDTH)
-    wav_file.setframerate(SAMPLE_RATE)
-
+    
     while True:
+        # ==== СОЗДАЁМ WAV-ФАЙЛ ====
+        filename = f"received_audio.wav"  # Имя файла с меткой времени
+        wav_file = wave.open(filename, "wb")
+        wav_file.setnchannels(CHANNELS)
+        wav_file.setsampwidth(SAMPLE_WIDTH)
+        wav_file.setframerate(SAMPLE_RATE)
+
+        # Начальное время
+        start_time = time.time()
+
+        
         data, addr = sock.recvfrom(PACKET_SIZE)  # Получаем данные
         packet_count += 1
 
@@ -49,12 +52,12 @@ try:
             print(f"📦 Получено пакетов: {packet_count}  ({len(audio_data)} байт)")
             audio_data.clear()  # Очищаем буфер
             wav_file.close()
+            packet_count = 0
 
 
             # Ожидаем 5 секунд
             print("⏳ Ожидание 5 секунд...")
             time.sleep(5)
-            packet_count = 0
 
             # Обновляем стартовое время для следующего блока
             start_time = time.time()
