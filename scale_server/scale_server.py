@@ -89,11 +89,11 @@ async def handle_device(client_id, message_queue):
                 if spk_model:
                     rec.SetSpkModel(spk_model)
 
-            # response = await loop.run_in_executor(pool, process_chunk, rec, payload)
+            response = await loop.run_in_executor(pool, process_chunk, rec, payload)
             audio_data.extend(payload)
 
             # logging.info(response[0])
-            # if response[1]: break
+            if response[1]: break
 
         except asyncio.TimeoutError:
             # Если прошло слишком много времени без сообщений — завершаем задачу
