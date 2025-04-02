@@ -117,11 +117,11 @@ def save_wav(data):
         wf.setframerate(16000)  # Частота дискретизации 16 кГц
 
         # Распаковываем данные из bytearray в 16-битные выборки
-        num_samples = len(data) // 2  # Количество 16-битных выборок
-        samples = struct.unpack("<" + "h" * num_samples, data)  # Преобразуем в 16-битные значения
+        # num_samples = len(data) // 2  # Количество 16-битных выборок
+        # samples = struct.unpack("<" + "h" * num_samples, data)  # Преобразуем в 16-битные значения
 
         # Записываем выборки в WAV файл
-        wf.writeframes(struct.pack("<" + "h" * num_samples, *samples))
+        wf.writeframes(data)
 
     print("Аудиофайл сохранен как 'received_audio.wav'")
 
