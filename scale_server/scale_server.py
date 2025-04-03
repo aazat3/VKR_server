@@ -34,7 +34,7 @@ def process_chunk(rec, payload):
         return '{"error": "processing error"}', False
     
 
-async def recognize(websocket, path):
+async def recognize(websocket, path=None):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
     logging.info(f"✅ Начало обработки устройства {websocket.remote_address}")
     
