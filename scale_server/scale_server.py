@@ -1,12 +1,11 @@
 import asyncio
-import aiomqtt
+import websockets
 import logging
 from sqlalchemy.orm import Session
 import json
 from SQL import database, models, schemas, crud
 from vosk import Model, SpkModel, KaldiRecognizer
 import wave
-import struct
 import concurrent.futures
 import os
 import sys
@@ -36,7 +35,7 @@ def process_chunk(rec, payload):
         return '{"error": "processing error"}', False
     
 
-async def handle_device(client_id, message_queue):
+async def recognize(client_id, message_queue):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
     logging.info(f"✅ Начало обработки устройства {client_id}")
     
@@ -171,38 +170,41 @@ async def main():
     spk_model = SpkModel(args.spk_model_path) if args.spk_model_path else None
     pool = concurrent.futures.ThreadPoolExecutor((os.cpu_count() or 1))
 
-    while True:
-        try:
-            async with aiomqtt.Client(
-                hostname="aazatserver.ru",
-                port=1883,
-                username="admin",
-                password="admin"
-            ) as client:
+    async with websockets.serve(recognize, args.interface, args.port):
+        await asyncio.Future()
+
+    # while True:
+    #     try:
+    #         async with aiomqtt.Client(
+    #             hostname="aazatserver.ru",
+    #             port=1883,
+    #             username="admin",
+    #             password="admin"
+    #         ) as client:
                 
-                await client.subscribe("iot/+/audio")
-                await client.subscribe("+/stream/voice")
-                recognizer = KaldiRecognizer(model, args.sample_rate)
-                async for message in client.messages:
-                    topic = message.topic
-                    payload = message.payload
-                    client_id = str(message.topic).split("/")[-2]
-                    if str(topic).endswith('/voice'):
-                        if recognizer.AcceptWaveform(payload):
-                            transcribe = recognizer.Result()
-                            data = json.loads(transcribe)
-                            logging.info(data)
+    #             await client.subscribe("iot/+/audio")
+    #             await client.subscribe("+/stream/voice")
+    #             recognizer = KaldiRecognizer(model, args.sample_rate)
+    #             async for message in client.messages:
+    #                 topic = message.topic
+    #                 payload = message.payload
+    #                 client_id = str(message.topic).split("/")[-2]
+    #                 if str(topic).endswith('/voice'):
+    #                     if recognizer.AcceptWaveform(payload):
+    #                         transcribe = recognizer.Result()
+    #                         data = json.loads(transcribe)
+    #                         logging.info(data)
 
-                    if str(topic).endswith('/audio'):
-                        if client_id not in device_tasks:
-                            logging.info("New device" + client_id)
-                            message_queue = asyncio.Queue()
-                            device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
-                        await message_queue.put(message)
+    #                 if str(topic).endswith('/audio'):
+    #                     if client_id not in device_tasks:
+    #                         logging.info("New device" + client_id)
+    #                         message_queue = asyncio.Queue()
+    #                         device_tasks[client_id] = asyncio.create_task(handle_device(client_id, message_queue))
+    #                     await message_queue.put(message)
 
-        except Exception as e:
-            logging.exception(f"Ошибка MQTT-соединения: {e}")
-            await asyncio.sleep(5)  # Ждём перед повторным подключением
+    #     except Exception as e:
+    #         logging.exception(f"Ошибка MQTT-соединения: {e}")
+    #         await asyncio.sleep(5)  # Ждём перед повторным подключением
 
 
 asyncio.run(main())
