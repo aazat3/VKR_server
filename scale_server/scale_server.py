@@ -92,9 +92,11 @@ async def recognize(websocket, path=None):
         except Exception as e:
             logging.error(f"Ошибка: {e}")
         finally:
-            save_wav(audio_data)
-            del audio_data  # Явное освобождение памяти
+            # save_wav(audio_data)
+            # del audio_data  # Явное освобождение памяти
             logging.info(f"⚠ Завершаем {websocket.remote_address}")
+    save_wav(audio_data)
+    del audio_data  # Явное освобождение памяти
 
 
 # Функция для сохранения аудиоданных в WAV
