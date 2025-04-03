@@ -51,8 +51,14 @@ async def recognize(websocket, path=None):
     max_alternatives = args.max_alternatives
     audio_data = bytearray()
     
-    async for message in websocket:
-        try:
+    try:
+        while True:
+            try:
+                # Ждем сообщение, но не дольше 7 секунд
+                message = await asyncio.wait_for(websocket.recv(), timeout=INACTIVITY_TIMEOUT)
+            except asyncio.TimeoutError:
+                logging.info(f"⚠ Тайм-аут {INACTIVITY_TIMEOUT} сек. Закрываем соединение: {websocket.remote_address}")
+                break  # Выходим из цикла
             # Load configuration if provided
             if isinstance(message, str) and 'config' in message:
                 jobj = json.loads(message)['config']
@@ -87,18 +93,14 @@ async def recognize(websocket, path=None):
 
             # logging.info(response[0])
             if response[1]: break
-        except websockets.exceptions.ConnectionClosedError:
-            logging.info(f"Соединение закрыто: {websocket.remote_address}")
-        except Exception as e:
-            logging.error(f"Ошибка: {e}")
-        # finally:
-        #     # save_wav(audio_data)
-        #     # del audio_data  # Явное освобождение памяти
-        #     logging.info(f"⚠ Завершаем {websocket.remote_address}")
-
-    logging.info(f"⚠ Завершаем {websocket.remote_address}")
-    save_wav(audio_data)
-    del audio_data  # Явное освобождение памяти
+    except websockets.exceptions.ConnectionClosedError:
+        logging.info(f"Соединение закрыто: {websocket.remote_address}")
+    except Exception as e:
+        logging.error(f"Ошибка: {e}")
+    finally:
+        save_wav(audio_data)
+        del audio_data  # Явное освобождение памяти
+        logging.info(f"⚠ Завершаем {websocket.remote_address}")
 
 
 # Функция для сохранения аудиоданных в WAV
