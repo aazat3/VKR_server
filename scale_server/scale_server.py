@@ -96,20 +96,6 @@ async def recognize(websocket, path):
             del audio_data  # Явное освобождение памяти
             logging.info(f"⚠ Завершаем {websocket.remote_address}")
 
-        # except asyncio.TimeoutError:
-        #     # Если прошло слишком много времени без сообщений — завершаем задачу
-        #     logging.info(f"⚠ Завершаем {client_id} (неактивен {INACTIVITY_TIMEOUT} сек.)")
-        #     save_wav(audio_data)
-        #     audio_data.clear()  # Очищаем массив данных после записи в WAV
-        #     break
-        # logging.info(f"⚠ Завершаем {websocket.remote_address}")
-        # save_wav(audio_data)
-        # audio_data.clear()  # Очищаем массив данных после записи в WAV
-    # # Очистка после завершения
-    # del device_tasks[client_id]
-    # del message_queue  # Явно удаляем очередь (необязательно, но можно)
-    # logging.info(f"🛑 Задача {client_id} завершена")
-
 
 # Функция для сохранения аудиоданных в WAV
 def save_wav(data):
@@ -118,11 +104,6 @@ def save_wav(data):
         wf.setnchannels(1)  # Моно
         wf.setsampwidth(2)  # 16 бит (2 байта)
         wf.setframerate(16000)  # Частота дискретизации 16 кГц
-
-        # Распаковываем данные из bytearray в 16-битные выборки
-        # num_samples = len(data) // 2  # Количество 16-битных выборок
-        # samples = struct.unpack("<" + "h" * num_samples, data)  # Преобразуем в 16-битные значения
-
         # Записываем выборки в WAV файл
         wf.writeframes(data)
 
@@ -157,7 +138,7 @@ async def main():
     args = type('', (), {})()
 
     args.interface = os.environ.get('VOSK_SERVER_INTERFACE', '0.0.0.0')
-    args.port = int(os.environ.get('VOSK_SERVER_PORT', 2700))
+    args.port = int(os.environ.get('VOSK_SERVER_PORT', 5000))
     args.model_path = os.environ.get('VOSK_MODEL_PATH', 'model')
     args.spk_model_path = os.environ.get('VOSK_SPK_MODEL_PATH')
     args.sample_rate = float(os.environ.get('VOSK_SAMPLE_RATE', 16000))
