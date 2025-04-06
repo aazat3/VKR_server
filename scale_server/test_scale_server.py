@@ -10,7 +10,7 @@ sample_rate = 16000
 async def save_audio(websocket: WebSocket):
     with wave.open(output_file, 'wb') as wf:
         wf.setnchannels(1)  # Моно
-        wf.setsampwidth(2)  # 16 бит (2 байта)
+        wf.setsampwidth(1)  # 16 бит (2 байта)
         wf.setframerate(sample_rate)
 
         while True:
