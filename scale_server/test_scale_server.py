@@ -5,12 +5,12 @@ import uvicorn
 
 app = FastAPI()
 output_file = "received_audio.wav"
-sample_rate = 16000
+sample_rate = 8000
 
 async def save_audio(websocket: WebSocket):
     with wave.open(output_file, 'wb') as wf:
         wf.setnchannels(1)  # Моно
-        wf.setsampwidth(1)  # 16 бит (2 байта)
+        wf.setsampwidth(2)  # 16 бит (2 байта)
         wf.setframerate(sample_rate)
 
         while True:
