@@ -49,7 +49,7 @@ async def recognize(websocket, path=None):
     sample_rate = args.sample_rate
     show_words = args.show_words
     max_alternatives = args.max_alternatives
-    audio_data = bytearray()
+    # audio_data = bytearray()
     
     try:
         while True:
@@ -89,7 +89,7 @@ async def recognize(websocket, path=None):
                     rec.SetSpkModel(spk_model)
 
             response = await loop.run_in_executor(pool, process_chunk, rec, message)
-            audio_data.extend(message)
+            # audio_data.extend(message)
 
             # logging.info(response[0])
             if response[1]: break
@@ -98,22 +98,22 @@ async def recognize(websocket, path=None):
     except Exception as e:
         logging.error(f"Ошибка: {e}")
     finally:
-        save_wav(audio_data)
-        del audio_data  # Явное освобождение памяти
+        # save_wav(audio_data)
+        # del audio_data  # Явное освобождение памяти
         logging.info(f"⚠ Завершаем {websocket.remote_address}")
 
 
-# Функция для сохранения аудиоданных в WAV
-def save_wav(data):
-    # Открываем WAV файл на запись
-    with wave.open("received_audio.wav", "wb") as wf:
-        wf.setnchannels(1)  # Моно
-        wf.setsampwidth(2)  # 16 бит (2 байта)
-        wf.setframerate(16000)  # Частота дискретизации 16 кГц
-        # Записываем выборки в WAV файл
-        wf.writeframes(data)
+# # Функция для сохранения аудиоданных в WAV
+# def save_wav(data):
+#     # Открываем WAV файл на запись
+#     with wave.open("received_audio.wav", "wb") as wf:
+#         wf.setnchannels(1)  # Моно
+#         wf.setsampwidth(2)  # 16 бит (2 байта)
+#         wf.setframerate(16000)  # Частота дискретизации 16 кГц
+#         # Записываем выборки в WAV файл
+#         wf.writeframes(data)
 
-    print("Аудиофайл сохранен как 'received_audio.wav'")
+#     print("Аудиофайл сохранен как 'received_audio.wav'")
 
 
 # def save_to_db(payload):
