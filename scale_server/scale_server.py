@@ -21,6 +21,7 @@ INACTIVITY_TIMEOUT = 10  # Время неактивности соединен�
 def process_chunk(rec, payload):    
     try:
         if payload == '{"eof" : 1}':
+            logging.info('{"eof" : 1}')
             return rec.FinalResult(), True
         if payload == '{"reset" : 1}':
             return rec.FinalResult(), False
