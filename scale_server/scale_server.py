@@ -101,6 +101,8 @@ async def recognize(websocket, path=None):
     finally:
         # save_wav(audio_data)
         # del audio_data  # Явное освобождение памяти
+        # await websocket.send(rec.FinalResult())  # Отправить финальный результат
+        await websocket.close()  # Явно закрыть соединение
         logging.info(f"⚠ Завершаем {websocket.remote_address}")
 
 
