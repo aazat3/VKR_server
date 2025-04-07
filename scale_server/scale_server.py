@@ -93,7 +93,9 @@ async def recognize(websocket, path=None):
             # audio_data.extend(message)
 
             # logging.info(response[0])
-            if response[1]: break
+            if response[1]: 
+                await websocket.send(response[0])
+                break
     except websockets.exceptions.ConnectionClosedError:
         logging.info(f"Соединение закрыто: {websocket.remote_address}")
     except Exception as e:
