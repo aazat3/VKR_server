@@ -92,13 +92,13 @@ async def recognize(websocket, path=None):
                     rec.SetSpkModel(spk_model)
 
             response = await loop.run_in_executor(pool, process_chunk, rec, message)
-            if ('result' in json.loads(response[0])):
+            if ("result" in json.loads(response[0])):
                 mainResponse = response[0]
             # audio_data.extend(message)
 
             # logging.info(response[0])
             if response[1]: 
-                textResponse = json.loads(mainResponse[0])['text']
+                textResponse = json.loads(mainResponse[0])["text"]
                 logging.info(f"Response: {textResponse}")
                 await websocket.send(textResponse)
                 break
