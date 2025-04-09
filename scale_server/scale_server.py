@@ -92,15 +92,12 @@ async def recognize(websocket, path=None):
                     rec.SetSpkModel(spk_model)
 
             response = await loop.run_in_executor(pool, process_chunk, rec, message)
-            logging.info(f"Response type: {type(responseText[0])}")
-            mainResponse = response
             # audio_data.extend(message)
 
             # logging.info(response[0])
             if response[1]: 
-                # logging.info(response[0])
-                responseText = json.loads(responseText[0].get("text", ""))
-                logging.info(f"Response: {responseText[0]}")
+                # responseText = json.loads(responseText[0].get("text", ""))
+                # logging.info(f"Response: {responseText[0]}")
                 # await websocket.send(responseText)
                 break
     except websockets.exceptions.ConnectionClosedError:
