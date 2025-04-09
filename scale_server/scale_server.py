@@ -94,11 +94,11 @@ async def recognize(websocket, path=None):
             response = await loop.run_in_executor(pool, process_chunk, rec, message)
             # audio_data.extend(message)
 
-            logging.info(response[0])
+            # logging.info(response[0])
             if response[1]: 
-                # response = json.loads(response[0])
-                # logging.info(f"Response: {response[0]}")
-                # await websocket.send(response)
+                responseText = json.loads(responseText[0].get("text", ""))
+                logging.info(f"Response: {responseText[0]}")
+                await websocket.send(responseText)
                 break
     except websockets.exceptions.ConnectionClosedError:
         logging.info(f"Соединение закрыто: {websocket.remote_address}")
