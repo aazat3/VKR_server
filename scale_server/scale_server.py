@@ -27,9 +27,9 @@ def process_chunk(rec, payload):
             return finalRec, True
         if payload == '{"reset" : 1}':
             return rec.FinalResult(), False
-        if rec.AcceptWaveform(payload):
-            logging.info(rec.Result())
-            return rec.Result(), False
+        # if rec.AcceptWaveform(payload):
+        #     logging.info(rec.Result())
+        #     return rec.Result(), False
         else:
             return rec.PartialResult(), False
     except Exception as e:
@@ -96,9 +96,9 @@ async def recognize(websocket, path=None):
 
             # logging.info(response[0])
             if response[1]: 
-                logging.info(response[0])
-                # responseText = json.loads(responseText[0].get("text", ""))
-                # logging.info(f"Response: {responseText[0]}")
+                # logging.info(response[0])
+                responseText = json.loads(responseText[0].get("text", ""))
+                logging.info(f"Response: {responseText[0]}")
                 # await websocket.send(responseText)
                 break
     except websockets.exceptions.ConnectionClosedError:
