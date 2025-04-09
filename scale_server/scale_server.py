@@ -93,6 +93,7 @@ async def recognize(websocket, path=None):
 
             response = await loop.run_in_executor(pool, process_chunk, rec, message)
             if ("result" in json.loads(response[0])):
+                logging.info(f"sting result founded")
                 mainResponse = response[0]
             # audio_data.extend(message)
 
