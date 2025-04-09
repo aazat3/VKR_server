@@ -53,7 +53,7 @@ async def recognize(websocket, path=None):
     show_words = args.show_words
     max_alternatives = args.max_alternatives
     # audio_data = bytearray()
-    
+    mainResponse = ""
     try:
         while True:
             try:
