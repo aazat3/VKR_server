@@ -22,17 +22,14 @@ def process_chunk(rec, payload):
     try:
         if payload == '{"eof" : 1}':
             logging.info('{"eof" : 1}')
-            if rec.AcceptWaveform(payload):
-                logging.info(rec.Result())
-                return rec.Result(), False
             finalRec = rec.FinalResult()
             logging.info(finalRec)
             return finalRec, True
         if payload == '{"reset" : 1}':
             return rec.FinalResult(), False
-        # if rec.AcceptWaveform(payload):
-        #     logging.info(rec.Result())
-        #     return rec.Result(), False
+        if rec.AcceptWaveform(payload):
+            logging.info(rec.Result())
+            return rec.Result(), False
         else:
             return rec.PartialResult(), False
     except Exception as e:
@@ -95,6 +92,8 @@ async def recognize(websocket, path=None):
                     rec.SetSpkModel(spk_model)
 
             response = await loop.run_in_executor(pool, process_chunk, rec, message)
+            logging.info(f"Response type: {type(responseText[0])}")
+            mainResponse = response
             # audio_data.extend(message)
 
             # logging.info(response[0])
