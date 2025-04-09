@@ -98,7 +98,7 @@ async def recognize(websocket, path=None):
 
             # logging.info(response[0])
             if response[1]: 
-                textResponse = json.loads(mainResponse[0])["text"]
+                textResponse = json.loads(mainResponse)["text"]
                 logging.info(f"Response: {textResponse}")
                 await websocket.send(textResponse)
                 break
