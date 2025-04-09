@@ -100,7 +100,7 @@ async def recognize(websocket, path=None):
             # audio_data.extend(message)
 
             if response[1]: 
-                textResponse = json.loads(mainResponse)["text"]
+                textResponse = str(json.loads(mainResponse)["text"])
                 logging.info(f"Response: {textResponse}")
                 await websocket.send(textResponse)
                 break
