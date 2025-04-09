@@ -96,9 +96,10 @@ async def recognize(websocket, path=None):
 
             # logging.info(response[0])
             if response[1]: 
-                responseText = json.loads(responseText[0].get("text", ""))
-                logging.info(f"Response: {responseText[0]}")
-                await websocket.send(responseText)
+                logging.info(response[0])
+                # responseText = json.loads(responseText[0].get("text", ""))
+                # logging.info(f"Response: {responseText[0]}")
+                # await websocket.send(responseText)
                 break
     except websockets.exceptions.ConnectionClosedError:
         logging.info(f"Соединение закрыто: {websocket.remote_address}")
