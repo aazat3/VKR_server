@@ -64,21 +64,25 @@ async def recognize(websocket, path=None):
                 logging.info(f"⚠ Тайм-аут {INACTIVITY_TIMEOUT} сек. Закрываем соединение: {websocket.remote_address}")
                 break  # Выходим из цикла
             # Load configuration if provided
-            if isinstance(message, str) and 'config' in message:
-                jobj = json.loads(message)['config']
-                logging.info("Config %s", jobj)
-                if 'phrase_list' in jobj:
-                    phrase_list = jobj['phrase_list']
-                if 'sample_rate' in jobj:
-                    sample_rate = float(jobj['sample_rate'])
-                if 'model' in jobj:
-                    model = Model(jobj['model'])
-                    model_changed = True
-                if 'words' in jobj:
-                    show_words = bool(jobj['words'])
-                if 'max_alternatives' in jobj:
-                    max_alternatives = int(jobj['max_alternatives'])
-                continue
+            if isinstance(message, str):
+                if 'config' in message:
+                    jobj = json.loads(message)['config']
+                    logging.info("Config %s", jobj)
+                    if 'phrase_list' in jobj:
+                        phrase_list = jobj['phrase_list']
+                    if 'sample_rate' in jobj:
+                        sample_rate = float(jobj['sample_rate'])
+                    if 'model' in jobj:
+                        model = Model(jobj['model'])
+                        model_changed = True
+                    if 'words' in jobj:
+                        show_words = bool(jobj['words'])
+                    if 'max_alternatives' in jobj:
+                        max_alternatives = int(jobj['max_alternatives'])
+                    continue
+                if 'id' in message:
+                    json.loads(message)
+                    logging.info(message)
 
             # Create the recognizer, word list is temporary disabled since not every model supports it
             if not rec or model_changed:
@@ -95,7 +99,6 @@ async def recognize(websocket, path=None):
             response = await loop.run_in_executor(pool, process_chunk, rec, message)
             # logging.info(response[0])
             if ("result" in json.loads(response[0])):
-                # logging.info(f"sting result founded")
                 mainResponse = response[0]
             # audio_data.extend(message)
 
