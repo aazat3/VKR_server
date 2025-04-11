@@ -12,3 +12,4 @@ class ProductResponse(ProductBase):
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
+        orm_mode = True

@@ -9,8 +9,8 @@ services:
   #   networks:
   #     - dev
   #   environment:
-  #     - DATABASE_URL=postgresql://@aazatserver.ru:5432/nutrition_db
-  #     - DATABASE_URL_async=postgresql+asyncpg://@aazatserver.ru:5432/nutrition_db
+  #     - DATABASE_URL=postgresql://@aazatserver.ru:5432/nutritionserver
+  #     - DATABASE_URL_async=postgresql+asyncpg://@aazatserver.ru:5432/nutritionserver
 
   #   volumes:
   #     - ./SQL:/SQL
@@ -22,25 +22,13 @@ services:
       - dev
     ports:
       - "5000:5000"
-    environment:
-      - PID=32452345
-      - VOSK_LANG=ru
-      - VOSK_SAMPLE_RATE=16000.0
-      - MQTT_ADDRESS=aazatserver.ru
-      - MQTT_USERNAME=admin
-      - MQTT_PASSWORD=admin
-      - TEST_FILE_NAME=test.wav
-      - VOSK_MODEL_PATH=/vosk-model-small-ru-0.22
-      - VOSK_MODEL_PATH2=/alphacep-model-android-ru-0.3
-      - DATABASE_URL=postgresql://@aazatserver.ru:5432/nutrition_db
-      - DATABASE_URL_async=postgresql+asyncpg://@aazatserver.ru:5432/nutrition_db
-      - PYTHONUNBUFFERED=1
-    # env_file:
-    #   - .env
+    env_file:
+      - .env.db
+      - .env.scale_server
     volumes:
       - ./SQL:/SQL
       - ./scale_server/vosk-model-small-ru-0.22:/vosk-model-small-ru-0.22
-      - ./scale_server/alphacep-model-android-ru-0.3:/alphacep-model-android-ru-0.3
+      # - ./scale_server/alphacep-model-android-ru-0.3:/alphacep-model-android-ru-0.3
     logging:
       driver: "json-file"
       options:
