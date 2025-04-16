@@ -23,7 +23,7 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      # - .env.db
+      - ./SQL/.env.db
       - .env.scale_server
     volumes:
       - ./SQL:/SQL
