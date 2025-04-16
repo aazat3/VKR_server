@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class ProductBase(BaseModel):
     name: str
-    calories: int
+    energy_kcal: int
 
 class ProductCreate(ProductBase):
     pass
