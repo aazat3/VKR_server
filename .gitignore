@@ -1,3 +1,5 @@
 venv/
 node_modules/
+SQL/__pycache__/
+SQL/**/*.pyc
 SQL/.env.db
