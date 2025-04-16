@@ -19,6 +19,7 @@ class ProductModel(Base):
     protein_percent: Mapped[int] = mapped_column(nullable=True)            # бел
     fat_percent: Mapped[int] = mapped_column(nullable=True)                # жир
     carbohydrates_percent: Mapped[int] = mapped_column(nullable=True)      # угл (всего углеводов)
+    
     saturatedfa_percent: Mapped[int] = mapped_column(nullable=True)        # нжк (насыщенные жирные кислоты)
     cholesterol_mg: Mapped[int] = mapped_column(nullable=True)             # хол
     monodisaccharides_percen: Mapped[int] = mapped_column(nullable=True)   # мдс

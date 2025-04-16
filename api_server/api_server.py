@@ -37,8 +37,8 @@ logger = logging.getLogger(__name__)
 
 # Эндпоинт для получения всех продуктов
 @app.get("/products/", response_model=list[ProductResponse])
-def products(db: AsyncSession = Depends(get_session)):
-    return get_products(db)
+async def products(db: AsyncSession = Depends(get_session)):
+    return await get_products(db)
 
 
 # app.add_middleware(

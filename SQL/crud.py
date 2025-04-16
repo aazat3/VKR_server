@@ -19,5 +19,7 @@ async def create_product(db: AsyncSession, product: ProductCreate):
     return db_product
 
 async def get_products(db: AsyncSession):
-    return await db.query(ProductModel).all()
+    stmt = select(ProductModel.id, ProductModel.name, ProductModel.energy_kcal)
+    result = await db.execute(stmt)
+    return result.scalars().all()
     

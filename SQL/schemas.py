@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class ProductBase(BaseModel):
     name: str
-    calories: float
+    calories: int
 
 class ProductCreate(ProductBase):
     pass
@@ -12,4 +12,3 @@ class ProductResponse(ProductBase):
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
-        orm_mode = True
