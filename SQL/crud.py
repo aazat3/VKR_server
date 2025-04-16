@@ -6,7 +6,7 @@ from SQL.schemas import *
 async def search_products(query: str, db: AsyncSession):
     ts_query = func.to_tsquery("russian", " & ".join(query.split()))
     stmt = select(ProductModel).where(
-        func.to_tsvector("russian", ProductModel.name + " " + ProductModel.description).op("@@")(ts_query)
+        func.to_tsvector("russian", ProductModel.name).op("@@")(ts_query)
     )
     result = await db.execute(stmt)
     return result.scalars().all()
