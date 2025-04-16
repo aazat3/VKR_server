@@ -19,7 +19,7 @@ async def create_product(db: AsyncSession, product: ProductCreate):
     return db_product
 
 async def get_products(db: AsyncSession):
-    stmt = select(ProductModel.id, ProductModel.name, ProductModel.energy_kcal).limit(20)
+    stmt = select(ProductModel).limit(20)
     result = await db.execute(stmt)
     result_dto = [ProductResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
     # [ProductResponse(id=row[0], name=row[1], energy_kcal=row[2]) for row in result]
