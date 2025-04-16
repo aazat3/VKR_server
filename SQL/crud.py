@@ -1,4 +1,5 @@
-from sqlalchemy.orm import AsyncSession, select, func
+from sqlalchemy.orm import select, func
+from sqlalchemy.ext.asyncio import AsyncSession
 from SQL.models import *
 from SQL.schemas import *
 
