@@ -1,10 +1,6 @@
 asyncio
-websockets
 sqlalchemy
-psycopg2-binary
 pydantic
 pydantic_settings
 asyncpg
-vosk
-fastapi
-uvicorn
+alembic

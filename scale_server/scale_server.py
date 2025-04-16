@@ -1,9 +1,10 @@
 import asyncio
 import websockets
 import logging
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import AsyncSession
 import json
-from SQL import database, models, schemas, crud
+from SQL.database import get_session
+from SQL.crud import search_products
 from vosk import Model, SpkModel, KaldiRecognizer
 import wave
 import concurrent.futures
@@ -104,6 +105,7 @@ async def recognize(websocket, path=None):
                 textResponse = str(json.loads(mainResponse)["text"])
                 logging.info(f"Response: {textResponse}")
                 await websocket.send(textResponse)
+                search(textResponse)
                 break
     except websockets.exceptions.ConnectionClosedError:
         logging.info(f"Соединение закрыто: {websocket.remote_address}")
@@ -113,6 +115,10 @@ async def recognize(websocket, path=None):
         await websocket.close()  # Явно закрыть соединение
         logging.info(f"⚠ Завершаем {websocket.remote_address}")
 
+async def search(q: str):
+     async for db in get_session():
+        sc_result = await search_products(q, db)
+        logging.info(sc_result)
 
 # def save_to_db(payload):
 #     with database.SessionLocal() as db:

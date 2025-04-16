@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 # from pathlib import Path
 import logging
 
-from SQL import database, models, schemas, crud
+import database, models, schemas, crud
 
 
 app = FastAPI()
