@@ -2,12 +2,15 @@ import random
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+
 # from pathlib import Path
 import logging
 
-import database, models, schemas, crud
-
+from SQL.database import get_session
+from SQL.models import *
+from SQL.schemas import *
+from SQL.crud import *
 
 app = FastAPI()
 
@@ -28,14 +31,14 @@ logger = logging.getLogger(__name__)
 #     return [{"device_id": row[0], "weight": row[1], "timestamp": row[2]} for row in data]
 
 # Эндпоинт для добавления продукта
-@app.post("/products/", response_model=schemas.ProductResponse)
-def create_product(product: schemas.ProductCreate, db: Session = Depends(database.get_session)):
-    return crud.create_product(db, product)
+# @app.post("/products/", response_model=schemas.ProductResponse)
+# def create_product(product: schemas.ProductCreate, db: Session = Depends(database.get_session)):
+#     return crud.create_product(db, product)
 
 # Эндпоинт для получения всех продуктов
-@app.get("/products/", response_model=list[schemas.ProductResponse])
-def get_products(db: Session = Depends(database.get_session)):
-    return crud.get_products(db)
+@app.get("/products/", response_model=list[ProductResponse])
+def products(db: AsyncSession = Depends(get_session)):
+    return get_products(db)
 
 
 # app.add_middleware(
