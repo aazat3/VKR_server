@@ -1,7 +1,6 @@
 import asyncio
 import websockets
 import logging
-from sqlalchemy.orm import AsyncSession
 import json
 from SQL.database import get_session
 from SQL.crud import search_products
