@@ -45,7 +45,7 @@ class ProductModel(Base):
     ethanol_percent: Mapped[int] = mapped_column(nullable=True)            # алк
 
     category: Mapped["CategoryModel"] = relationship(back_populates="products")
-    meals: Mapped[list["MealModel"]] = relationship(back_populates="products")
+    meals: Mapped[list["MealModel"]] = relationship(back_populates="product")
 
     
 
@@ -68,7 +68,7 @@ class CategoryModel(Base):
     id: Mapped[int_pk]
     name: Mapped[str_uniq]
 
-    products: Mapped[list["ProductModel"]] = relationship(back_populates="categories")
+    products: Mapped[list["ProductModel"]] = relationship(back_populates="category")
 
 
 class UserModel(Base):
@@ -80,8 +80,8 @@ class UserModel(Base):
     password: Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str_uniq]
 
-    meals: Mapped[list["MealModel"]] = relationship(back_populates="users")
-    devices: Mapped[list["DeviceModel"]] = relationship(back_populates="users")
+    meals: Mapped[list["MealModel"]] = relationship(back_populates="user")
+    device: Mapped[list["DeviceModel"]] = relationship(back_populates="user")
 
 
 class DeviceModel(Base):
@@ -91,6 +91,6 @@ class DeviceModel(Base):
     userID: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     serialNumber: Mapped[int] = mapped_column(nullable=False, unique=True,)
     
-    user: Mapped["UserModel"] = relationship(back_populates="devices")
+    user: Mapped["UserModel"] = relationship(back_populates="device")
 
 
