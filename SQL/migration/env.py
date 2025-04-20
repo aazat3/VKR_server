@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Добавляем в sys.path путь к корню проекта (где лежит папка src)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 import asyncio
 from logging.config import fileConfig
 

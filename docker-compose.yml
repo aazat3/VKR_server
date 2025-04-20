@@ -11,6 +11,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
+      - .api_server/.env
       - ./SQL/.env.db
     volumes:
       - ./SQL:/SQL
@@ -24,7 +25,7 @@ services:
       - "5000:5000"
     env_file:
       - ./SQL/.env.db
-      - .env.scale_server
+      - ./scale_server/.env.scale_server
     volumes:
       - ./SQL:/SQL
       - ./scale_server/vosk-model-small-ru-0.22:/vosk-model-small-ru-0.22

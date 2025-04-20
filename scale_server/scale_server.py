@@ -3,7 +3,7 @@ import websockets
 import logging
 import json
 from SQL.database import get_session
-from SQL.crud import search_products
+from SQL.products.dao import *
 from vosk import Model, SpkModel, KaldiRecognizer
 import wave
 import concurrent.futures
@@ -116,7 +116,7 @@ async def recognize(websocket, path=None):
 
 async def search(q: str):
      async for db in get_session():
-        sc_result = await search_products(q, db)
+        sc_result = await ProductsDAO.search_products(q, db)
         logging.info(sc_result)
 
 # def save_to_db(payload):
