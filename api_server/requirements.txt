@@ -3,6 +3,7 @@ uvicorn
 sqlalchemy>=2.0.40
 psycopg2-binary
 pydantic
+pydantic[email]
 pydantic_settings
 asyncpg
 python-jose
