@@ -2,7 +2,7 @@ from sqlalchemy import select, func
 from SQL.models import *
 from SQL.products.schemas import *
 from SQL.base_dao import *
-from database import get_session
+from SQL.database import get_session
 
 
 
