@@ -63,7 +63,7 @@ def get_token(request: Request):
     return token
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str):
     try:
         auth_data = Settings.get_auth_data()
         payload = jwt.decode(token, auth_data['secret_key'], algorithms=[auth_data['algorithm']])
@@ -104,7 +104,8 @@ async def logout_user(response: Response):
 
 
 @app.get("/me/")
-async def get_me(user_data: UserModel = Depends(get_current_user)):
+async def get_me(token: str = Depends(oauth2_scheme)):
+    user_data: UserModel = get_current_user(token)
     return user_data
 
 if __name__ == "__main__":
