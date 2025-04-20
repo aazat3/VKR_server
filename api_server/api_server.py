@@ -7,7 +7,6 @@ import logging
 
 from auth import get_password_hash
 
-from SQL.database import get_session
 from SQL.models import *
 from SQL.products.schemas import *
 from SQL.users.schemas import *
@@ -27,12 +26,12 @@ logger = logging.getLogger(__name__)
 
 # Эндпоинт для получения всех продуктов
 @app.get("/products/", response_model=list[ProductResponse])
-async def products(db: AsyncSession = Depends(get_session)):
-    return await ProductsDAO.get_products(db)
+async def products():
+    return await ProductsDAO.get_products()
 
 @app.post("/register/")
-async def register_user(user_data: UserRegister, db: AsyncSession = Depends(get_session)) -> dict:
-    user = await UsersDAO.find_one_or_none(db, email=user_data.email)
+async def register_user(user_data: UserRegister) -> dict:
+    user = await UsersDAO.find_one_or_none(email=user_data.email)
     if user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
