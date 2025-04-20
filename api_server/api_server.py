@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Response, Request
 import uvicorn
 from jose import jwt, JWTError
-from datetime import datetime, timezone
 
 
 # from pathlib import Path
@@ -15,6 +14,8 @@ from SQL.users.schemas import *
 from SQL.base_dao import *
 from SQL.users.dao import *
 from SQL.products.dao import *
+
+from datetime import datetime, timezone
 
 app = FastAPI()
 
