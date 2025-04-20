@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Response, Request
+from fastapi.security import OAuth2PasswordBearer
 import uvicorn
 from jose import jwt, JWTError
 
@@ -22,6 +23,8 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+
 # # Эндпоинт для добавления продукта
 # @app.post("/products/", response_model=ProductResponse)
 # def create_product(product: ProductCreate, db: AsyncSession = Depends(get_session)):
@@ -32,7 +35,7 @@ logger = logging.getLogger(__name__)
 async def products():
     return await ProductsDAO.get_products()
 
-@app.post("/register/")
+@app.post("/auth/register/")
 async def register_user(user_data: UserRegister) -> dict:
     user = await UsersDAO.find_one_or_none(email=user_data.email)
     if user:
@@ -60,7 +63,7 @@ def get_token(request: Request):
     return token
 
 
-async def get_current_user(token: str = Depends(get_token)):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         auth_data = Settings.get_auth_data()
         payload = jwt.decode(token, auth_data['secret_key'], algorithms=[auth_data['algorithm']])
@@ -83,7 +86,7 @@ async def get_current_user(token: str = Depends(get_token)):
     return user
 
 
-@app.post("/login/")
+@app.post("/auth/login/")
 async def auth_user(response: Response, user_data: UserAuth):
     check = await authenticate_user(email=user_data.email, password=user_data.password)
     if check is None:
@@ -94,7 +97,7 @@ async def auth_user(response: Response, user_data: UserAuth):
     return {'access_token': access_token, 'refresh_token': None}
 
 
-@app.post("/logout/")
+@app.post("/auth/logout/")
 async def logout_user(response: Response):
     response.delete_cookie(key="users_access_token")
     return {'message': 'Пользователь успешно вышел из системы'}
