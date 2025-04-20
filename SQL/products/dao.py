@@ -2,7 +2,7 @@ from sqlalchemy import select, func
 from SQL.models import *
 from SQL.products.schemas import *
 from SQL.base_dao import *
-from SQL.database import get_session
+from SQL.database import async_session_factory
 
 
 
@@ -10,7 +10,7 @@ class ProductsDAO(BaseDAO):
     model = ProductModel
 
     async def search_products(query: str):
-        async with get_session() as session:
+        async with async_session_factory() as session:
             ts_query = func.to_tsquery("russian", " & ".join(query.split()))
             stmt = select(ProductModel).where(
                 func.to_tsvector("russian", ProductModel.name).op("@@")(ts_query)
@@ -26,7 +26,7 @@ class ProductsDAO(BaseDAO):
     #     return db_product
 
     async def get_products():
-        async with get_session() as session:
+        async with async_session_factory() as session:
             stmt = select(ProductModel).limit(20)
             result = await session.execute(stmt)
             result_dto = [ProductResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
