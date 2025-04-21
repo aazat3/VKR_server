@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Response, Request
+from fastapi import FastAPI, Depends, HTTPException, status, Response, Request, Cookie
 from fastapi.security import OAuth2PasswordBearer
 import uvicorn
 from jose import jwt, JWTError
@@ -62,8 +62,19 @@ def get_token(request: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token not found')
     return token
 
+def get_token_from_cookie_or_header(
+    request: Request,
+    token_from_header: str = Depends(oauth2_scheme),
+    token_from_cookie: str = Cookie(default=None, alias="users_access_token")
+):
+    # Приоритет: Cookie -> Header
+    token = token_from_cookie or token_from_header
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return token
 
-async def get_current_user(token: str):
+
+async def get_current_user(token: str = Depends(get_token)):
     try:
         auth_data = Settings.get_auth_data()
         payload = jwt.decode(token, auth_data['secret_key'], algorithms=[auth_data['algorithm']])
@@ -104,8 +115,9 @@ async def logout_user(response: Response):
 
 
 @app.get("/me/")
-async def get_me(token: str = Depends(oauth2_scheme)):
-    user_data: UserModel = get_current_user(token)
+async def get_me(user_data: UserModel = Depends(get_current_user)):
+# async def get_me(token: str = Depends(oauth2_scheme)):
+#     user_data: UserModel = get_current_user(token)
     return user_data
 
 if __name__ == "__main__":
