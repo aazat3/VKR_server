@@ -10,7 +10,7 @@ from SQL.users.schemas import *
 from SQL.base_dao import *
 from SQL.users.dao import *
 from SQL.products.dao import *
-from api_server.user_auth import router as router_user_auth
+from user_auth import router as router_user_auth
 
 from datetime import datetime, timezone
 
