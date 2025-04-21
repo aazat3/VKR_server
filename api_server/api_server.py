@@ -62,20 +62,20 @@ def get_token(request: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token not found')
     return token
 
-def get_token_from_cookie_or_header(
-    request: Request,
-    token_from_header: str = Depends(oauth2_scheme),
-    # users_access_token: str = Cookie(default=None, alias="users_access_token")
-):
-    users_access_token = request.cookies.get('users_access_token')
-    # Приоритет: Cookie -> Header
-    token = users_access_token #or token_from_header
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token not found')
-    return token
+# def get_token_from_cookie_or_header(
+#     request: Request,
+#     token_from_header: str = Depends(oauth2_scheme),
+#     # users_access_token: str = Cookie(default=None, alias="users_access_token")
+# ):
+#     users_access_token = request.cookies.get('users_access_token')
+#     # Приоритет: Cookie -> Header
+#     token = users_access_token #or token_from_header
+#     if not token:
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token not found')
+#     return token
 
 
-async def get_current_user(token: str = Depends(get_token_from_cookie_or_header)):
+async def get_current_user(token: str = Depends(get_token)):
     try:
         auth_data = Settings.get_auth_data()
         payload = jwt.decode(token, auth_data['secret_key'], algorithms=[auth_data['algorithm']])
