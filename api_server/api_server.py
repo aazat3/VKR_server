@@ -23,7 +23,7 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 # # Эндпоинт для добавления продукта
 # @app.post("/products/", response_model=ProductResponse)
@@ -104,9 +104,9 @@ async def auth_user(response: Response, user_data: UserAuth):
     if check is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Неверная почта или пароль')
-    access_token = create_access_token({"sub": str(check.id)})
-    response.set_cookie(key="users_access_token", value=access_token, httponly=True)
-    return {'access_token': access_token, 'refresh_token': None}
+    users_access_token = create_access_token({"sub": str(check.id)})
+    response.set_cookie(key="users_access_token", value=users_access_token, httponly=True)
+    return {'users_access_token': users_access_token, 'refresh_token': None}
 
 
 @app.post("/auth/logout/")
