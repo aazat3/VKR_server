@@ -69,9 +69,9 @@ def get_token_from_cookie_or_header(
 ):
     users_access_token = request.cookies.get('users_access_token')
     # Приоритет: Cookie -> Header
-    token = users_access_token or token_from_header
+    token = users_access_token #or token_from_header
     if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token not found')
     return token
 
 
