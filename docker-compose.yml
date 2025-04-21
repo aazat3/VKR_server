@@ -16,25 +16,25 @@ services:
     volumes:
       - ./SQL:/SQL
 
-  scale_server:
-    build:
-      context: ./scale_server
-    networks:
-      - dev
-    ports:
-      - "5000:5000"
-    env_file:
-      - ./SQL/.env.db
-      - ./scale_server/.env.scale_server
-    volumes:
-      - ./SQL:/SQL
-      - ./scale_server/vosk-model-small-ru-0.22:/vosk-model-small-ru-0.22
-      # - ./scale_server/alphacep-model-android-ru-0.3:/alphacep-model-android-ru-0.3
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+  # scale_server:
+  #   build:
+  #     context: ./scale_server
+  #   networks:
+  #     - dev
+  #   ports:
+  #     - "5000:5000"
+  #   env_file:
+  #     - ./SQL/.env.db
+  #     - ./scale_server/.env.scale_server
+  #   volumes:
+  #     - ./SQL:/SQL
+  #     - ./scale_server/vosk-model-small-ru-0.22:/vosk-model-small-ru-0.22
+  #     # - ./scale_server/alphacep-model-android-ru-0.3:/alphacep-model-android-ru-0.3
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
     
   nginx:
     image: nginx:stable-alpine
@@ -46,18 +46,6 @@ services:
       - '/etc/letsencrypt:/etc/letsencrypt'
     depends_on:
       - api_server
-      - scale_server
+      # - scale_server
     networks:
       - dev
-
-  # backend:
-  #   build:
-  #     context: ./backend
-  #   networks:
-  #     - dev
-
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #   networks:
-  #     - dev
