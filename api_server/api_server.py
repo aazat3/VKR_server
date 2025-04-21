@@ -65,10 +65,10 @@ def get_token(request: Request):
 def get_token_from_cookie_or_header(
     request: Request,
     token_from_header: str = Depends(oauth2_scheme),
-    token_from_cookie: str = Cookie(default=None, alias="users_access_token")
+    users_access_token: str = Cookie(default=None, alias="users_access_token")
 ):
     # Приоритет: Cookie -> Header
-    token = token_from_cookie or token_from_header
+    token = users_access_token or token_from_header
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     return token
