@@ -64,7 +64,7 @@ def get_token(request: Request):
 
 def get_token_from_cookie_or_header(
     request: Request,
-    token_from_header: str = Depends(oauth2_scheme),
+    # token_from_header: str = Depends(oauth2_scheme),
     # users_access_token: str = Cookie(default=None, alias="users_access_token")
 ):
     users_access_token = request.cookies.get('users_access_token')
@@ -75,7 +75,7 @@ def get_token_from_cookie_or_header(
     return token
 
 
-async def get_current_user(token: str = Depends(get_token)):
+async def get_current_user(token: str = Depends(get_token_from_cookie_or_header)):
     try:
         auth_data = Settings.get_auth_data()
         payload = jwt.decode(token, auth_data['secret_key'], algorithms=[auth_data['algorithm']])
