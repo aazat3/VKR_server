@@ -18,7 +18,10 @@ from SQL.products.dao import *
 
 from datetime import datetime, timezone
 
-app = FastAPI()
+app = FastAPI(
+    title="VKR",
+    root_path="/api"
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
