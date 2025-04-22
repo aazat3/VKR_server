@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 # from pathlib import Path
 import logging
 
-from api_server.user_auth.auth import get_current_user
+from user_auth.auth import get_current_user
 
 
 from SQL.models import *
