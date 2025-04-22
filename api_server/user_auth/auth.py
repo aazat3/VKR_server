@@ -12,7 +12,8 @@ from SQL.users.dao import *
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login/", auto_error=False)
+cookie_scheme = APIKeyCookie(name="users_access_token", auto_error=False)
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
@@ -37,22 +38,16 @@ async def authenticate_user(email: EmailStr, password: str):
         return None
     return user
 
-def get_token(request: Request, token: str = Depends(oauth2_scheme)):
-    # Пытаемся получить токен из заголовка Authorization: Bearer <token>
-    if token:
-        return token
-    
-    # Если токена нет в заголовке, проверяем куки
-    # token_from_cookie = request.cookies.get("users_access_token")
-    token_from_cookie = APIKeyCookie(name="users_access_token", auto_error=False)
-    if token_from_cookie:
-        return token_from_cookie
-    
-    # Если токена нет нигде — ошибка 401
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Not authenticated",
-    )
+async def get_token(
+    request: Request,
+    header_token: str = Depends(oauth2_scheme),
+    cookie_token: str = Depends(cookie_scheme),
+):
+    if header_token:
+        return header_token  # Bearer-токен из заголовка
+    if cookie_token:
+        return cookie_token  # Токен из куки
+    raise HTTPException(status_code=401, detail="Not authenticated")
 
 # def get_token(request: Request):
 #     token = request.cookies.get('users_access_token')
