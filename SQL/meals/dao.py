@@ -31,5 +31,5 @@ class MealsDAO(BaseDAO):
             stmt = select(MealModel).limit(20)
             result = await session.execute(stmt)
             # result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
-            return result.scalars().all
+            return result.scalars().all()
         
