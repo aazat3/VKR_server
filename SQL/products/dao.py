@@ -29,7 +29,6 @@ class ProductsDAO(BaseDAO):
         async with async_session_factory() as session:
             stmt = select(ProductModel).limit(20)
             result = await session.execute(stmt)
-            result_dto = [ProductResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
-            # [ProductResponse(id=row[0], name=row[1], energy_kcal=row[2]) for row in result]
-            return result_dto
+            # result_dto = [ProductResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
+            return result.scalars().all()
         
