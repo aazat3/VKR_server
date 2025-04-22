@@ -31,13 +31,14 @@ class BaseDAO:
     @classmethod
     async def add(cls, **values): 
         async with async_session_factory() as session:
-            async with session.begin():
-                new_instance = cls.model(**values)
-                session.add(new_instance)
-                try:
-                    await session.commit()
-                    await session.refresh(new_instance)
-                    return new_instance
-                except SQLAlchemyError as e:
-                    await session.rollback()
-                    raise e
+            # async with session.begin():
+            new_instance = cls.model(**values)
+            session.add(new_instance)
+            try:
+                await session.flush()
+                await session.refresh(new_instance)
+                await session.commit()
+                return new_instance
+            except SQLAlchemyError as e:
+                await session.rollback()
+                raise e
