@@ -35,9 +35,8 @@ class BaseDAO:
                 new_instance = cls.model(**values)
                 session.add(new_instance)
                 try:
-                    await session.flush()
-                    await session.refresh(new_instance)
                     await session.commit()
+                    await session.refresh(new_instance)
                     return new_instance
                 except SQLAlchemyError as e:
                     await session.rollback()
