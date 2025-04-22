@@ -29,7 +29,7 @@ class BaseDAO:
             return result.scalar_one_or_none()
     
     @classmethod
-    async def add(cls, **values):
+    async def add(cls, **values): 
         async with async_session_factory() as session:
             async with session.begin():
                 new_instance = cls.model(**values)
