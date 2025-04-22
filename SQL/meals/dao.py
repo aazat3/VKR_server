@@ -18,13 +18,13 @@ class MealsDAO(BaseDAO):
     #         result = await session.execute(stmt)
     #         return result.scalars().all()
 
-    # async def add_meal(meal: MealCreate):
-    #     async with async_session_factory() as session:
-    #         session = MealModel(name=meal.name, calories=meal.calories)
-    #         session.add(meal)    
-    #         await session.commit()
-    #         await session.refresh(db_product)
-    #         return db_product
+    async def add_meal(meal: MealCreate):
+        async with async_session_factory() as session:
+            new_instance = MealModel()
+            session.add(new_instance)    
+            await session.commit()
+            await session.refresh()
+            return new_instance
 
     async def get_meals():
         async with async_session_factory() as session:
