@@ -1,13 +1,13 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
-from datetime import time
+from datetime import datetime
 
 
 class MealBase(BaseModel):
     userID: int = Field(..., description="ID пользователя")
     productID: int = Field(..., description="ID продукта")
     weight: int = Field(..., description="Вес продукта")
-    time: time
+    time: datetime
 
 class MealCreate(MealBase):
     pass
