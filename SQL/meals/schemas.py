@@ -18,6 +18,12 @@ class MealResponse(MealBase):
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
 
+class MealResponseID(BaseModel):
+    id: int = Field(..., description="ID приема")
+
+    class Config:
+        from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
+
     # phone_number: str = Field(..., description="Номер телефона в международном формате, начинающийся с '+'")
     # last_name: str = Field(..., min_length=3, max_length=50, description="Фамилия, от 3 до 50 символов")
 

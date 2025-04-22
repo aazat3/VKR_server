@@ -29,15 +29,15 @@ class BaseDAO:
             return result.scalar_one_or_none()
     
     @classmethod
-    async def add(cls, **values): 
+    async def add(cls, **values):
         async with async_session_factory() as session:
-            new_instance = cls.model(**values)
-            session.add(new_instance)
-            try:
-                await session.flush()
-                await session.refresh(new_instance)
-                await session.commit()
-            except SQLAlchemyError as e:
-                await session.rollback()
-                raise e
-            return new_instance
+            async with session.begin():
+                new_instance = cls.model(**values)
+                new_instance_ID = new_instance.id
+                session.add(new_instance)
+                try:
+                    await session.commit()
+                except SQLAlchemyError as e:
+                    await session.rollback()
+                    raise e
+                return new_instance_ID
