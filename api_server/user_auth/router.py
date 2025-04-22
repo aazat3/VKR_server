@@ -1,8 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordBearer
-
-
-# from pathlib import Path
 import logging
 
 from user_auth.auth import get_current_user, get_password_hash, authenticate_user, create_access_token

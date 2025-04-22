@@ -1,12 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request, Cookie
 from fastapi.security import OAuth2PasswordBearer
-
-# from pathlib import Path
 import logging
 
 from user_auth.auth import get_current_user
-
-
 from SQL.models import *
 from SQL.meals.schemas import *
 from SQL.meals.dao import *

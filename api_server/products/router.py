@@ -7,11 +7,10 @@ from jose import jwt, JWTError
 # from pathlib import Path
 import logging
 
-from user_auth.auth import *
+from user_auth.auth import get_current_user
 
 from SQL.models import *
 from SQL.products.schemas import *
-from SQL.base_dao import *
 from SQL.products.dao import *
 
 router = APIRouter(prefix='/product', tags=['Product'])
