@@ -1,15 +1,18 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
+from datetime import time
 
 
-class ProductBase(BaseModel):
-    name: str
-    energy_kcal: int
+class MealBase(BaseModel):
+    userID: int
+    productID: int
+    weight: int
+    time: time
 
-class ProductCreate(ProductBase):
-    pass
+class MealCreate(MealBase):
+    id: int
 
-class ProductResponse(ProductBase):
+class MealResponse(MealBase):
     id: int
 
     class Config:

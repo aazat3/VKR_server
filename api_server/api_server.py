@@ -11,6 +11,8 @@ from SQL.base_dao import *
 from SQL.users.dao import *
 from SQL.products.dao import *
 from user_auth.router import router as router_user_auth
+from products.router import router as router_products
+
 
 from datetime import datetime, timezone
 
@@ -22,20 +24,9 @@ app = FastAPI(
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
-
-# # Эндпоинт для добавления продукта
-# @app.post("/products/", response_model=ProductResponse)
-# def create_product(product: ProductCreate, db: AsyncSession = Depends(get_session)):
-#     return ProductsDAO.create_product(db, product)
-
-# Эндпоинт для получения всех продуктов
-@app.get("/products/", response_model=list[ProductResponse])
-async def products():
-    return await ProductsDAO.get_products()
-
 
 app.include_router(router_user_auth)
+app.include_router(router_products)
 
 
 if __name__ == "__main__":

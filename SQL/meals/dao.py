@@ -1,0 +1,35 @@
+from sqlalchemy import select, func
+from SQL.models import *
+from SQL.meals.schemas import *
+from SQL.base_dao import *
+from SQL.database import async_session_factory
+
+
+
+class MealsDAO(BaseDAO):
+    model = MealModel
+
+    # async def search_products_by_name(query: str):
+    #     async with async_session_factory() as session:
+    #         ts_query = func.to_tsquery("russian", " & ".join(query.split()))
+    #         stmt = select(ProductModel).where(
+    #             func.to_tsvector("russian", ProductModel.name).op("@@")(ts_query)
+    #         )
+    #         result = await session.execute(stmt)
+    #         return result.scalars().all()
+
+    # async def add_meal(meal: MealCreate):
+    #     async with async_session_factory() as session:
+    #         session = MealModel(name=meal.name, calories=meal.calories)
+    #         session.add(meal)    
+    #         await session.commit()
+    #         await session.refresh(db_product)
+    #         return db_product
+
+    async def get_meals():
+        async with async_session_factory() as session:
+            stmt = select(MealModel).limit(20)
+            result = await session.execute(stmt)
+            result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
+            return result_dto
+        

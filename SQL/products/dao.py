@@ -9,7 +9,7 @@ from SQL.database import async_session_factory
 class ProductsDAO(BaseDAO):
     model = ProductModel
 
-    async def search_products(query: str):
+    async def search_products_by_name(query: str):
         async with async_session_factory() as session:
             ts_query = func.to_tsquery("russian", " & ".join(query.split()))
             stmt = select(ProductModel).where(

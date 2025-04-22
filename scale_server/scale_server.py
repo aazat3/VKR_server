@@ -116,7 +116,7 @@ async def recognize(websocket, path=None):
 
 async def search(q: str):
      async for db in get_session():
-        sc_result = await ProductsDAO.search_products(q, db)
+        sc_result = await ProductsDAO.search_products_by_name(q, db)
         logging.info(sc_result)
 
 # def save_to_db(payload):
