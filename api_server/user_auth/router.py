@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
-from fastapi.security import OAuth2PasswordBearer
 import logging
 
 from user_auth.auth import get_current_user, get_password_hash, authenticate_user, create_access_token
@@ -10,8 +9,6 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 @router.post("/register/")
 async def register_user(user_data: UserRegister) -> dict:
