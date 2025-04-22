@@ -33,7 +33,7 @@ class BaseDAO:
         async with async_session_factory() as session:
             async with session.begin():
                 new_instance = cls.model(**values)
-                new_instance_ID = new_instance.id
+                new_instance_ID = new_instance
                 session.add(new_instance)
                 try:
                     await session.commit()
