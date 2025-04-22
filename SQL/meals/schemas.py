@@ -4,16 +4,16 @@ from datetime import time
 
 
 class MealBase(BaseModel):
-    userID: int
-    productID: int
-    weight: int
+    userID: int = Field(..., description="ID пользователя")
+    productID: int = Field(..., description="ID продукта")
+    weight: int = Field(..., description="Вес продукта")
     time: time
 
 class MealCreate(MealBase):
-    id: int
+    pass
 
 class MealResponse(MealBase):
-    id: int
+    id: int = Field(..., description="ID приема")
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
