@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 # Эндпоинт для добавления продукта
 @router.post("/", response_model=MealResponse)
 async def create_meal(meal: MealCreate):
-    return await MealsDAO.add(**meal.model_dump())
+    return await MealsDAO.add(**meal.model_dump()).scalars().all()
 
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[MealResponse])
 async def get_meals():
-    return await MealsDAO.get_meals()
+    return await MealsDAO.get_meals().scalars().all()
