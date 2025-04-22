@@ -2,10 +2,10 @@ from sqlalchemy import ForeignKey, text, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from SQL.database import Base, int_pk, str_uniq
 from typing import Annotated, Optional
-import datetime
+from datetime import datetime
 
 
-time = Annotated[datetime.datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"))]
+time = Annotated[datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"))]
 
 
 class ProductModel(Base):
@@ -57,7 +57,7 @@ class MealModel(Base):
     userID: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     productID: Mapped[int] = mapped_column(ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     weight: Mapped[int] = mapped_column(nullable=False)
-    time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    time: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     user: Mapped["UserModel"] = relationship(back_populates="meals")
     product: Mapped["ProductModel"] = relationship(back_populates="meals")

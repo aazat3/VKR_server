@@ -7,7 +7,7 @@ class MealBase(BaseModel):
     userID: int = Field(..., description="ID пользователя")
     productID: int = Field(..., description="ID продукта")
     weight: int = Field(..., description="Вес продукта")
-    # time: datetime 
+    time: datetime 
 
 class MealCreate(MealBase):
     pass
