@@ -31,5 +31,5 @@ async def create_meal(meal: MealCreate):
 @router.get("/", response_model=list[MealResponse])
 async def get_meals():
     result = await MealsDAO.get_meals()
-    logger.info(type(result))
+    logger.info(type(result[0]))
     return result
