@@ -7,7 +7,7 @@ from jose import jwt, JWTError
 # from pathlib import Path
 import logging
 
-from auth import *
+from api_server.user_auth.auth import *
 
 from SQL.models import *
 from SQL.products.schemas import *

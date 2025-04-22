@@ -1,17 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Request, Cookie
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
-import uvicorn
-from jose import jwt, JWTError
-
 
 # from pathlib import Path
 import logging
 
-from auth import *
+from api_server.user_auth.auth import get_current_user
+
 
 from SQL.models import *
 from SQL.meals.schemas import *
-from SQL.base_dao import *
 from SQL.meals.dao import *
 
 router = APIRouter(prefix='/meal', tags=['Meal'])
@@ -31,3 +28,9 @@ async def create_meal(meal: MealCreate):
 async def get_meals():
     result = await MealsDAO.get_meals()
     return result
+
+@router.get("/me/")
+async def get_me(user_data: UserModel = Depends(get_current_user)):
+# async def get_me(token: str = Depends(oauth2_scheme)):
+#     user_data: UserModel = get_current_user(token)
+    return user_data
