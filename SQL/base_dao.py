@@ -36,7 +36,6 @@ class BaseDAO:
             try:
                 await session.flush()
                 await session.refresh(new_instance)
-                await session.commit()
             except SQLAlchemyError as e:
                 await session.rollback()
                 raise e
