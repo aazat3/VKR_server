@@ -30,6 +30,4 @@ async def create_meal(meal: MealCreate):
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[MealResponse])
 async def get_meals():
-    result = await MealsDAO.get_meals()
-    meals = result.scalars().all()
-    return meals
+    return await MealsDAO.get_meals()
