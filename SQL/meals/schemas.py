@@ -12,6 +12,11 @@ class MealBase(BaseModel):
 class MealCreate(MealBase):
     pass
 
+class MealAdd(BaseModel):
+    productID: int = Field(..., description="ID продукта")
+    weight: int = Field(..., description="Вес продукта")
+    time: datetime = Field(..., description="Время")
+
 class MealResponse(MealBase):
     id: int = Field(..., description="ID приема")
 

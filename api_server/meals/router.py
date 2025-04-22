@@ -15,14 +15,15 @@ logger = logging.getLogger(__name__)
 
 # Эндпоинт для добавления продукта
 @router.post("/", response_model=MealResponse)
-async def create_meal(meal: MealCreate):
+async def create_meal(meal: MealAdd, user_data: UserModel = Depends(get_current_user)):
+    meal = MealCreate(user_data.id, meal.model_dump())
     result = await MealsDAO.add(**meal.model_dump())
     return MealResponse.model_validate(result)
 
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[MealResponse])
-async def get_meals():
-    result = await MealsDAO.get_meals()
+async def get_meals(user_data: UserModel = Depends(get_current_user)):
+    result = await MealsDAO.get_meals(user_data.id)
     return result
 
 @router.get("/me/")

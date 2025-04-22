@@ -26,9 +26,9 @@ class MealsDAO(BaseDAO):
     #         await session.refresh()
     #         return new_instance
 
-    async def get_meals():
+    async def get_meals(userID):
         async with async_session_factory() as session:
-            stmt = select(MealModel).limit(20)
+            stmt = select(MealModel).where(MealModel.id == userID).limit(20)
             result = await session.execute(stmt)
             # result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
             return result.scalars().all()
