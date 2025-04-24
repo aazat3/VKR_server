@@ -9,14 +9,24 @@ from SQL.database import async_session_factory
 class ProductsDAO(BaseDAO):
     model = ProductModel
 
-    async def search_products_by_name(query: str):
-        async with async_session_factory() as session:
-            ts_query = func.to_tsquery("russian", " & ".join(query.split()))
-            stmt = select(ProductModel).where(
-                func.to_tsvector("russian", ProductModel.name).op("@@")(ts_query)
-            )
-            result = await session.execute(stmt)
-            return result.scalars().all()
+    async def search_products_by_name(query: str, limit: int = 10):
+        try:
+            async with async_session_factory() as session:
+                # Подготавливаем запрос для полнотекстового поиска
+                ts_query = func.to_tsquery("russian", " & ".join(query.lower().split()))
+                stmt = (
+                    select(ProductModel)
+                    .where(func.to_tsvector("russian", ProductModel.name).op("@@")(ts_query))
+                    .limit(limit)  # Ограничиваем количество результатов
+                )
+                result = await session.execute(stmt)
+                products = result.scalars().all()
+
+                return products
+        except SQLAlchemyError as e:
+            # Логируем ошибку или выбрасываем её
+            print(f"Ошибка при выполнении запроса: {e}")
+            return []
 
     # async def create_product(session: AsyncSession, product: ProductCreate):
     #     session = ProductModel(name=product.name, calories=product.calories)
