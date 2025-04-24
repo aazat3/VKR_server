@@ -12,21 +12,22 @@ class ProductsDAO(BaseDAO):
     async def search_products_by_name(query: str, limit: int = 10):
         try:
             async with async_session_factory() as session:
-                # Разбиваем запрос по словам и формируем ts_query
+                # Приведение запроса к нижнему регистру и формирование ts_query
                 query = query.lower().strip()
                 ts_query = func.to_tsquery("russian", " & ".join(query.split()))
                 tsvector = func.to_tsvector("russian", ProductModel.name)
-                rank = func.ts_rank(tsvector, ts_query)
+                rank_expr = func.ts_rank(tsvector, ts_query)
 
                 stmt = (
                     select(ProductModel)
                     .where(tsvector.op("@@")(ts_query))
-                    .order_by(rank.desc)  # сортировка по релевантности
+                    .order_by(rank_expr.desc())  # Правильное использование desc()
                     .limit(limit)
                 )
 
                 result = await session.execute(stmt)
                 return result.scalars().all()
+
         except SQLAlchemyError as e:
             print(f"Ошибка при поиске продуктов: {e}")
             return []
