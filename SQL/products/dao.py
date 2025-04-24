@@ -21,7 +21,7 @@ class ProductsDAO(BaseDAO):
                 stmt = (
                     select(ProductModel)
                     .where(tsvector.op("@@")(ts_query))
-                    .order_by(desc(rank))  # сортировка по релевантности
+                    .order_by((rank).desc)  # сортировка по релевантности
                     .limit(limit)
                 )
 
