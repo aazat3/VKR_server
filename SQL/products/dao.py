@@ -1,4 +1,4 @@
-from sqlalchemy import select, func, desc
+from sqlalchemy import select, func, desc, case
 from SQL.models import *
 from SQL.products.schemas import *
 from SQL.base_dao import *
