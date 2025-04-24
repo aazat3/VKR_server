@@ -30,7 +30,7 @@ class MealsDAO(BaseDAO):
 
     async def get_meals(userID):
         async with async_session_factory() as session:
-            stmt = select(MealModel).where(MealModel.userID == userID).options(joinedload(MealModel.product))
+            stmt = select(MealModel).where(MealModel.userID == userID).options(joinedload(MealModel.product)).order_by(MealModel.time.desc()) 
             result = await session.execute(stmt)
             # result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
             return result.scalars().all()
