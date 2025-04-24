@@ -21,7 +21,7 @@ async def create_meal(meal: MealAdd, user_data: UserModel = Depends(get_current_
     return MealResponse.model_validate(result)
 
 # Эндпоинт для получения всех продуктов
-@router.get("/", response_model=list[MealResponse])
+@router.get("/", response_model=list[MealResponseWithProduct])
 async def get_meals(user_data: UserModel = Depends(get_current_user)):
     result = await MealsDAO.get_meals(user_data.id)
     return result

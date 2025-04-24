@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
 from datetime import datetime
 
+from SQL.products.schemas import ProductResponse
 
 class MealBase(BaseModel):
     userID: int = Field(..., description="ID пользователя")
@@ -19,6 +20,12 @@ class MealAdd(BaseModel):
 
 class MealResponse(MealBase):
     id: int = Field(..., description="ID приема")
+
+    class Config:
+        from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
+
+class MealResponseWithProduct(MealResponse):
+    product: "ProductResponse"
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic

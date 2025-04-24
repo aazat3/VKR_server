@@ -1,4 +1,6 @@
 from sqlalchemy import select, func
+from sqlalchemy.orm import aliased, contains_eager, joinedload, selectinload
+
 from SQL.models import *
 from SQL.meals.schemas import *
 from SQL.base_dao import *
@@ -28,7 +30,7 @@ class MealsDAO(BaseDAO):
 
     async def get_meals(userID):
         async with async_session_factory() as session:
-            stmt = select(MealModel).where(MealModel.userID == userID).limit(20)
+            stmt = select(MealModel).where(MealModel.userID == userID).options(joinedload(MealModel.product))
             result = await session.execute(stmt)
             # result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
             return result.scalars().all()
