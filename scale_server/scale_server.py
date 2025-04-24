@@ -2,7 +2,6 @@ import asyncio
 import websockets
 import logging
 import json
-from SQL.database import get_session
 from SQL.products.dao import *
 from vosk import Model, SpkModel, KaldiRecognizer
 import wave
@@ -115,9 +114,8 @@ async def recognize(websocket, path=None):
         logging.info(f"⚠ Завершаем {websocket.remote_address}")
 
 async def search(q: str):
-     async for db in get_session():
-        sc_result = await ProductsDAO.search_products_by_name(q, db)
-        logging.info(sc_result)
+    sc_result = await ProductsDAO.search_products_by_name(q)
+    logging.info(sc_result)
 
 # def save_to_db(payload):
 #     with database.SessionLocal() as db:
