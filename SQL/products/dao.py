@@ -14,16 +14,23 @@ class ProductsDAO(BaseDAO):
             async with async_session_factory() as session:
                 ts_vector = func.to_tsvector('russian', ProductModel.name)
                 ts_query = func.plainto_tsquery('russian', query)
+                rank = func.ts_rank(ts_vector, ts_query)
+
+                # Выше приоритет, если точное совпадение
+                exact_match = case(
+                    (func.lower(ProductModel.name) == query.lower(), 1),
+                    else_=0
+                )
 
                 stmt = (
-                    select(ProductModel, func.ts_rank(ts_vector, ts_query).label("rank"))
+                    select(ProductModel, rank.label("rank"))
                     .where(ts_vector.op('@@')(ts_query))
-                    .order_by(desc("rank"))  # Сортировка по релевантности
+                    .order_by(desc(exact_match), desc(rank))  # сначала точные, потом по релевантности
                     .limit(limit)
                 )
 
                 result = await session.execute(stmt)
-                return [row[0] for row in result.all()]  # возвращаем только модели
+                return [row[0] for row in result.all()]
         except SQLAlchemyError as e:
             print(f"Ошибка при поиске: {e}")
             return []
