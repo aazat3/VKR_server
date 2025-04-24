@@ -1,5 +1,6 @@
 import asyncio
 import websockets
+from websockets.legacy.server import WebSocketServerProtocol
 import logging
 import json
 from SQL.products.dao import *
@@ -37,7 +38,7 @@ def process_chunk(rec, payload):
         return '{"error": "processing error"}', False
     
 
-async def recognize(websocket, path=None):
+async def recognize(websocket: WebSocketServerProtocol, path=None):
     """Обрабатывает сообщения от конкретного IoT-устройства"""
     logging.info(f"✅ Начало обработки устройства {websocket.remote_address}")
     
