@@ -16,22 +16,26 @@ class ProductsDAO(BaseDAO):
                 ts_query = func.plainto_tsquery('russian', query)
                 rank = func.ts_rank(ts_vector, ts_query)
 
-                # Выше приоритет, если точное совпадение
+                # 1. Точное совпадение (приоритет 3)
                 exact_match = case(
-                    (func.lower(ProductModel.name) == query.lower(), 1),
-                    else_=0
+                    (func.lower(ProductModel.name) == query.lower(), 3),
+                    (ProductModel.name.ilike(f"%{query}%"), 2),  # частичное совпадение (приоритет 2)
+                    else_=1  # остальные (приоритет 1)
                 )
+
+                # 2. Длина имени (короткие выше)
+                name_length = func.length(ProductModel.name)
 
                 stmt = (
                     select(ProductModel, rank.label("rank"))
                     .where(ts_vector.op('@@')(ts_query))
-                    .order_by(desc(exact_match), desc(rank))  # сначала точные, потом по релевантности
+                    .order_by(desc(exact_match), name_length, desc(rank))
                     .limit(limit)
                 )
 
                 result = await session.execute(stmt)
                 return [row[0] for row in result.all()]
-        except SQLAlchemyError as e:
+        except Exception as e:
             print(f"Ошибка при поиске: {e}")
             return []
 
