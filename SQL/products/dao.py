@@ -1,4 +1,4 @@
-from sqlalchemy import select, func
+from sqlalchemy import select, func, desc
 from SQL.models import *
 from SQL.products.schemas import *
 from SQL.base_dao import *
@@ -9,27 +9,23 @@ from SQL.database import async_session_factory
 class ProductsDAO(BaseDAO):
     model = ProductModel
 
-    async def search_products_by_name(query: str, limit: int = 10):
+    async def search_products_by_name(query: str, limit: int = 20):
         try:
             async with async_session_factory() as session:
-                # Приведение запроса к нижнему регистру и формирование ts_query
-                query = query.lower().strip()
-                ts_query = func.to_tsquery("russian", " & ".join(query.split()))
-                tsvector = func.to_tsvector("russian", ProductModel.name)
-                rank_expr = func.ts_rank(tsvector, ts_query)
+                ts_vector = func.to_tsvector('russian', ProductModel.name)
+                ts_query = func.plainto_tsquery('russian', query)
 
                 stmt = (
-                    select(ProductModel)
-                    .where(tsvector.op("@@")(ts_query))
-                    .order_by(rank_expr.desc())  # Правильное использование desc()
+                    select(ProductModel, func.ts_rank(ts_vector, ts_query).label("rank"))
+                    .where(ts_vector.op('@@')(ts_query))
+                    .order_by(desc("rank"))  # Сортировка по релевантности
                     .limit(limit)
                 )
 
                 result = await session.execute(stmt)
-                return result.scalars().all()
-
+                return [row[0] for row in result.all()]  # возвращаем только модели
         except SQLAlchemyError as e:
-            print(f"Ошибка при поиске продуктов: {e}")
+            print(f"Ошибка при поиске: {e}")
             return []
 
     # async def create_product(session: AsyncSession, product: ProductCreate):
