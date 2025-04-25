@@ -53,7 +53,7 @@ class MealsDAO(BaseDAO):
                     stmt = stmt.where(MealModel.time <= start_date + timedelta(days=1))
             
             if after_id:
-                query = query.filter(ProductModel.id > after_id)
+                stmt = stmt.filter(MealModel.id > after_id)
 
             stmt = stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc()).limit(size)
             result = await session.execute(stmt)

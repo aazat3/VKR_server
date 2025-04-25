@@ -27,7 +27,7 @@ async def get_meals(
     size: int = Query(50, ge=1, le=100),
     after_id: int | None = Query(None, description="Возвращать записи после этого ID"),
     start_date: datetime = Query(None, description="Начальаня дата для фильтрации", example="2025-04-01T00:00:00"),
-    end_date: datetime = Query(None, description="Конечная дата для фильтрации", example="2025-04-05T23:59:59")
+    end_date: datetime = Query(None, description="Конечная дата для фильтрации", example="2025-04-30T23:59:59")
     ):
     result = await MealsDAO.get_meals_by_date(user_data.id, size, after_id, start_date, end_date)
     return result
