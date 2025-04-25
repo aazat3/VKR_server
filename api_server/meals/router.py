@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Request, Cookie
+from fastapi import APIRouter, Depends, Query
 from fastapi.security import OAuth2PasswordBearer
 import logging
 
@@ -22,8 +22,12 @@ async def create_meal(meal: MealAdd, user_data: UserModel = Depends(get_current_
 
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[MealResponseWithProduct])
-async def get_meals(user_data: UserModel = Depends(get_current_user)):
-    result = await MealsDAO.get_meals(user_data.id)
+async def get_meals(
+    user_data: UserModel = Depends(get_current_user),
+    start_date: datetime = Query(None, description="Start date for filtering meals", example="2025-04-01T00:00:00"),
+    end_date: datetime = Query(None, description="End date for filtering meals", example="2025-04-05T23:59:59")
+    ):
+    result = await MealsDAO.get_meals_by_date(user_data.id, start_date, end_date)
     return result
 
 @router.get("/me/")

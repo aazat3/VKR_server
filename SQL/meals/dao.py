@@ -36,26 +36,18 @@ class MealsDAO(BaseDAO):
             # result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
             return result.scalars().all()
         
-    async def get_meals_by_date(userID, start_date: datetime, end_date: datetime | None = None):
+    async def get_meals_by_date(userID, start_date: datetime | None = None, end_date: datetime | None = None):
         async with async_session_factory() as session:
+            stmt = select(MealModel).where(MealModel.userID == userID)
+            
+            if start_date:
+                stmt = stmt.where(MealModel.time >= start_date)
             if end_date:
-                stmt = (
-                    select(MealModel)
-                    .where(MealModel.userID == userID)
-                    .where(MealModel.time >= start_date)
-                    .where(MealModel.time <= end_date)
-                    .options(joinedload(MealModel.product))
-                    .order_by(MealModel.time.desc())
-                )
+                stmt = stmt.where(MealModel.time <= end_date)
             else:
-                stmt = (
-                    select(MealModel)
-                    .where(MealModel.userID == userID)
-                    .where(MealModel.time >= start_date)
-                    .where(MealModel.time <= start_date + timedelta(days=1))
-                    .options(joinedload(MealModel.product))
-                    .order_by(MealModel.time.desc())
-                )
+                stmt = stmt.where(MealModel.time <= start_date + timedelta(days=1))
+
+            stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc())
             result = await session.execute(stmt)
             return result.scalars().all()
             
