@@ -36,7 +36,12 @@ class MealsDAO(BaseDAO):
             # result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
             return result.scalars().all()
         
-    async def get_meals_by_date(userID, start_date: datetime | None = None, end_date: datetime | None = None):
+    async def get_meals_by_date(
+            userID,    
+            size: int = 50,
+            after_id: int | None = None, 
+            start_date: datetime | None = None, 
+            end_date: datetime | None = None) -> list[ProductModel]:
         async with async_session_factory() as session:
             stmt = select(MealModel).where(MealModel.userID == userID)
             
@@ -46,8 +51,11 @@ class MealsDAO(BaseDAO):
                     stmt = stmt.where(MealModel.time <= end_date)
                 else:
                     stmt = stmt.where(MealModel.time <= start_date + timedelta(days=1))
+            
+            if after_id:
+                query = query.filter(ProductModel.id > after_id)
 
-            stmt = stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc())
+            stmt = stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc()).limit(size)
             result = await session.execute(stmt)
             return result.scalars().all()
             
