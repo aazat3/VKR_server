@@ -55,7 +55,7 @@ class MealsDAO(BaseDAO):
             if after_id:
                 stmt = stmt.filter(MealModel.id > after_id)
 
-            stmt = stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc()).limit(size)
+            stmt = stmt.options(joinedload(MealModel.product)).order_by(MealModel.id.asc()).limit(size)
             result = await session.execute(stmt)
             return result.scalars().all()
             
