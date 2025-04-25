@@ -47,7 +47,7 @@ class MealsDAO(BaseDAO):
                 else:
                     stmt = stmt.where(MealModel.time <= start_date + timedelta(days=1))
 
-            stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc())
+            stmt = stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc())
             result = await session.execute(stmt)
             return result.scalars().all()
             
