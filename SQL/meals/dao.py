@@ -42,10 +42,10 @@ class MealsDAO(BaseDAO):
             
             if start_date:
                 stmt = stmt.where(MealModel.time >= start_date)
-            if end_date:
-                stmt = stmt.where(MealModel.time <= end_date)
-            else:
-                stmt = stmt.where(MealModel.time <= start_date + timedelta(days=1))
+                if end_date:
+                    stmt = stmt.where(MealModel.time <= end_date)
+                else:
+                    stmt = stmt.where(MealModel.time <= start_date + timedelta(days=1))
 
             stmt.options(joinedload(MealModel.product)).order_by(MealModel.time.desc())
             result = await session.execute(stmt)
