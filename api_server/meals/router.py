@@ -29,7 +29,7 @@ async def get_meals(
     start_date: datetime = Query(None, description="Начальаня дата для фильтрации", example="2025-04-01T00:00:00"),
     end_date: datetime = Query(None, description="Конечная дата для фильтрации", example="2025-04-30T23:59:59")
     ):
-    result = await MealsDAO.get_meals_by_date(user_data.id, size, after_id, start_date, end_date)
+    result = await MealsDAO.get_meals(user_data.id, size, after_id, start_date, end_date)
     return result
 
 @router.get("/me/")
