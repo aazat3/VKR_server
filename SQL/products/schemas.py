@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
-from SQL.category.schemas import CategoryResponse
+from SQL.categories.schemas import CategoryResponse
 
 
 class ProductBase(BaseModel):
