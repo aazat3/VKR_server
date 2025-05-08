@@ -28,7 +28,6 @@ class MealResponse(MealBase):
 
 class MealResponseWithProduct(MealResponse):
     product: "ProductResponseWithCategory"
-    category: "CategoryResponse"
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
