@@ -13,6 +13,7 @@ from SQL.products.dao import *
 from user_auth.router import router as router_user_auth
 from products.router import router as router_products
 from meals.router import router as router_meals
+from categories.router import router as router_categories
 
 
 from datetime import datetime, timezone
@@ -29,6 +30,8 @@ logger = logging.getLogger(__name__)
 app.include_router(router_user_auth)
 app.include_router(router_products)
 app.include_router(router_meals)
+app.include_router(router_categories)
+
 
 
 if __name__ == "__main__":
