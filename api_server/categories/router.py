@@ -7,7 +7,7 @@ from SQL.models import *
 from SQL.categories.schemas import *
 from SQL.categories.dao import *
 
-router = APIRouter(prefix='/category', tags=['category'])
+router = APIRouter(prefix='/category', tags=['Category'])
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,6 +22,6 @@ logger = logging.getLogger(__name__)
 
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[CategoryResponse])
-async def get_meals():
+async def get_categories():
     result = await CategoriesDAO.find_all()
     return result
