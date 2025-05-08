@@ -1,16 +1,54 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
+from SQL.category.schemas import CategoryResponse
 
 
 class ProductBase(BaseModel):
     name: str
+    categoryID: int
     energy_kcal: int
+    water_percent: int
+    protein_percent: int
+    fat_percent: int
+    carbohydrates_percent: int
+    saturatedfa_percent: Optional[int] = None
+    cholesterol_mg: Optional[int] = None
+    monodisaccharides_percen: Optional[int] = None
+    starch_percent: Optional[int] = None
+    fiber_percent: Optional[int] = None
+    organicacids_percent: Optional[int] = None
+    ash_percent: Optional[int] = None
+    sodium_mg: Optional[int] = None
+    potassium_mg: Optional[int] = None
+    calcium_mg: Optional[int] = None
+    magnesium_mg: Optional[int] = None
+    phosphorus_mg: Optional[int] = None
+    iron_mg: Optional[int] = None
+    retinol_ug: Optional[int] = None
+    betacarotene_ug: Optional[int] = None
+    retinoleq_ug: Optional[int] = None
+    tocopheroleq_mg: Optional[int] = None
+    thiamine_mg: Optional[int] = None
+    riboflavin_mg: Optional[int] = None
+    niacin_mg: Optional[int] = None
+    niacineq_mg: Optional[int] = None
+    ascorbicacid_mg: Optional[int] = None
+    polyunsaturatedfa_percent: Optional[int] = None
+    ethanol_percent: Optional[int] = None
+
 
 class ProductCreate(ProductBase):
     pass
 
 class ProductResponse(ProductBase):
     id: int
+
+    class Config:
+        from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
+
+class ProductResponseWithCategory(ProductResponse):
+    category: "CategoryResponse"
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic

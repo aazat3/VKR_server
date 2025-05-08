@@ -105,6 +105,7 @@ async def recognize(websocket: WebSocketServerProtocol, path=None):
                 logging.info(f"Response: {textResponse}")
                 await websocket.send(textResponse)
                 await search(textResponse)
+                # await save_to_db(textResponse)
                 break
     except websockets.exceptions.ConnectionClosedError:
         logging.info(f"Соединение закрыто: {websocket.remote_address}")
@@ -114,27 +115,15 @@ async def recognize(websocket: WebSocketServerProtocol, path=None):
         await websocket.close()  # Явно закрыть соединение
         logging.info(f"⚠ Завершаем {websocket.remote_address}")
 
+
 async def search(q: str):
     sc_result = await ProductsDAO.search_products_by_name(q)
     logging.info(sc_result)
 
-# def save_to_db(payload):
-#     with database.SessionLocal() as db:
-#         try:
-#             product = models.Product(
-#                 name = payload["name"],
-#                 calories = payload["calories"]
-#             )
-#             db.add(product)
-#             db.commit()
-#             db.refresh(product)
-#         except:
-#             db.rollback()
-#             logging.info("Ошибка сохранения: {e}")
-#         finally:
-#             db.close()
-#         # crud.create_product(db, product)
 
+async def save_to_db(q: str):
+    sc_result = await ProductsDAO.add_meal(q)
+    logging.info(sc_result)
 
 
 async def main():

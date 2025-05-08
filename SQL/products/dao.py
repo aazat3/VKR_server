@@ -1,4 +1,6 @@
 from sqlalchemy import select, func, desc, case
+from sqlalchemy.orm import aliased, contains_eager, joinedload, selectinload
+
 from SQL.models import *
 from SQL.products.schemas import *
 from SQL.base_dao import *
@@ -46,10 +48,22 @@ class ProductsDAO(BaseDAO):
     #     await session.refresh(db_product)
     #     return db_product
 
-    async def get_products():
+    async def get_products_simple():
         async with async_session_factory() as session:
             stmt = select(ProductModel).limit(20)
             result = await session.execute(stmt)
             # result_dto = [ProductResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
             return result.scalars().all()
         
+    async def get_products(
+            size: int = 50,
+            after_id: int | None = None, 
+    ):
+        async with async_session_factory() as session:
+            stmt = select(ProductModel)
+            if after_id:
+                stmt = stmt.filter(ProductModel.id > after_id)
+
+            stmt = stmt.options(joinedload(ProductModel.category)).order_by(ProductModel.id.asc()).limit(size)
+            result = await session.execute(stmt)
+            return result.scalars().all()

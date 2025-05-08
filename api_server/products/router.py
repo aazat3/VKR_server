@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Request, Cookie
+from fastapi import APIRouter, Query
 from fastapi.security import OAuth2PasswordBearer
 import uvicorn
 from jose import jwt, JWTError
@@ -25,6 +25,9 @@ logger = logging.getLogger(__name__)
 #     return ProductsDAO.create_product(db, product)
 
 # Эндпоинт для получения всех продуктов
-@router.get("/", response_model=list[ProductResponse])
-async def products():
-    return await ProductsDAO.get_products()
+@router.get("/", response_model=list[ProductResponseWithCategory])
+async def products(
+    size: int = Query(50, ge=1, le=100),
+    after_id: int | None = Query(None, description="Возвращать записи после этого ID"),
+):
+    return await ProductsDAO.get_products(size, after_id)
