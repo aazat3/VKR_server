@@ -31,6 +31,7 @@ class ProductsDAO(BaseDAO):
                 stmt = (
                     select(ProductModel, rank.label("rank"))
                     .where(ts_vector.op('@@')(ts_query))
+                    .options(joinedload(ProductModel.category))
                     .order_by(desc(exact_match), name_length, desc(rank))
                     .limit(limit)
                 )
