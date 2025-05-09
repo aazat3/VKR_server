@@ -29,5 +29,13 @@ logger = logging.getLogger(__name__)
 async def products(
     size: int = Query(50, ge=1, le=100),
     after_id: int | None = Query(None, description="Возвращать записи после этого ID"),
-):
+    ):
     return await ProductsDAO.get_products(size, after_id)
+
+# Эндпоинт для получения всех продуктов по названию
+@router.get("/search", response_model=list[ProductResponseWithCategory])
+async def products(
+    size: int = Query(50, ge=1, le=100),
+    name: str | None = Query(None, description="Название продукта"),
+    ):
+    return await ProductsDAO.get_products_by_name(name, size)

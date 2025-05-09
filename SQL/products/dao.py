@@ -11,7 +11,7 @@ from SQL.database import async_session_factory
 class ProductsDAO(BaseDAO):
     model = ProductModel
 
-    async def search_products_by_name(query: str, limit: int = 20):
+    async def get_products_by_name(query: str, limit: int = 20):
         try:
             async with async_session_factory() as session:
                 ts_vector = func.to_tsvector('russian', ProductModel.name)

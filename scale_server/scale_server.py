@@ -117,7 +117,7 @@ async def recognize(websocket: WebSocketServerProtocol, path=None):
 
 
 async def search(q: str):
-    sc_result = await ProductsDAO.search_products_by_name(q)
+    sc_result = await ProductsDAO.get_products_by_name(q)
     logging.info(sc_result)
 
 
