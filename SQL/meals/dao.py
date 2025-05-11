@@ -45,12 +45,20 @@ class MealsDAO(BaseDAO):
         async with async_session_factory() as session:
             stmt = select(MealModel).where(MealModel.userID == userID)
             
-            if end_date:
-                stmt = stmt.where(MealModel.time <= start_date.date)
+            if start_date or end_date:
                 if start_date:
-                    stmt = stmt.where(MealModel.time >= end_date.date)
-                else:
-                    stmt = stmt.where(MealModel.time >= end_date.date - timedelta(days=1))
+                    # Конвертируем datetime в date с вызовом метода ()
+                    stmt = stmt.where(MealModel.time >= start_date.date())
+                if end_date:
+                    # Добавляем время 23:59:59 к конечной дате
+                    end_date_with_time = end_date.replace(hour=23, minute=59, second=59)
+                    stmt = stmt.where(MealModel.time <= end_date_with_time)
+
+                # Если указана конечная дата, но не указана начальная
+                if end_date and not start_date:
+                    # Берем период 24 часа до конечной даты
+                    start_date = end_date - timedelta(days=1)
+                    stmt = stmt.where(MealModel.time >= start_date)
             
             if after_id:
                 stmt = stmt.filter(MealModel.id > after_id)
