@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordBearer
 import logging
 
@@ -24,7 +24,10 @@ async def create_meal(meal: MealAdd, user_data: UserModel = Depends(get_current_
 async def delete_meals(
     user_data: UserModel = Depends(get_current_user), 
     meal: MealDelete = Query(None, description="Удалить прием с ID"),):
-    result = await MealsDAO.delete_meal(user_data.id, meal)
+    if user_data.id != meal.userID:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+    result = await MealsDAO.delete_meal(meal.id, user_data.id)
     return result
 
 # Эндпоинт для получения всех продуктов
