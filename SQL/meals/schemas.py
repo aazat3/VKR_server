@@ -22,7 +22,6 @@ class MealAdd(BaseModel):
 
 class MealDelete(BaseModel):
     id: int = Field(..., description="ID приема")
-    userID: int = Field(..., description="ID пользователя")
 
 class MealResponse(MealBase):
     id: int = Field(..., description="ID приема")

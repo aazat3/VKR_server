@@ -42,6 +42,8 @@ class MealsDAO(BaseDAO):
             
             if not meal:
                 raise 
+            if meal.userID != user_id:
+                raise 
             
             # Удаляем запись
             await session.delete(meal)
