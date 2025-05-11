@@ -50,7 +50,7 @@ class MealsDAO(BaseDAO):
                 if start_date:
                     stmt = stmt.where(MealModel.time >= end_date.date)
                 else:
-                    stmt = stmt.where(MealModel.time >= start_date.date - timedelta(days=1))
+                    stmt = stmt.where(MealModel.time >= end_date.date - timedelta(days=1))
             
             if after_id:
                 stmt = stmt.filter(MealModel.id > after_id)
