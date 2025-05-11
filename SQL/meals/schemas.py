@@ -20,6 +20,10 @@ class MealAdd(BaseModel):
     weight: int = Field(..., description="Вес продукта")
     time: datetime = Field(..., description="Время")
 
+class MealDelete(BaseModel):
+    id: int = Field(..., description="ID приема")
+    userID: int = Field(..., description="ID пользователя")
+
 class MealResponse(MealBase):
     id: int = Field(..., description="ID приема")
 

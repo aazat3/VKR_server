@@ -20,6 +20,13 @@ async def create_meal(meal: MealAdd, user_data: UserModel = Depends(get_current_
     result = await MealsDAO.add(**meal.model_dump())
     return MealResponse.model_validate(result)
 
+@router.delete("/", response_model=MealResponseWithProduct)
+async def delete_meals(
+    user_data: UserModel = Depends(get_current_user), 
+    meal: MealDelete = Query(None, description="Удалить прием с ID"),):
+    result = await MealsDAO.delete_meal(user_data.id, meal)
+    return result
+
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[MealResponseWithProduct])
 async def get_meals(

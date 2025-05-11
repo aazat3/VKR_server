@@ -29,13 +29,26 @@ class MealsDAO(BaseDAO):
     #         await session.refresh()
     #         return new_instance
 
-    async def get_meals_simple(userID):
+    async def delete_meal(meal_id: int, user_id: int) -> MealModel:
         async with async_session_factory() as session:
-            stmt = select(MealModel).where(MealModel.userID == userID).options(joinedload(MealModel.product)).order_by(MealModel.time.desc()) 
+            # Получаем прием пищи с проверкой владельца
+            stmt = select(MealModel).where(
+                (MealModel.id == meal_id) & 
+                (MealModel.userID == user_id)
+            )
+            
             result = await session.execute(stmt)
-            # result_dto = [MealResponse.model_validate(row, from_attributes=True) for row in result.scalars().all()]
-            return result.scalars().all()
-        
+            meal = result.scalar_one_or_none()
+            
+            if not meal:
+                raise 
+            
+            # Удаляем запись
+            await session.delete(meal)
+            await session.commit()
+            
+            return meal
+            
     async def get_meals(
             userID,    
             size: int = 50,
