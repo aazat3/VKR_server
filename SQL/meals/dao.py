@@ -45,12 +45,12 @@ class MealsDAO(BaseDAO):
         async with async_session_factory() as session:
             stmt = select(MealModel).where(MealModel.userID == userID)
             
-            if start_date:
-                stmt = stmt.where(MealModel.time >= start_date)
-                if end_date:
-                    stmt = stmt.where(MealModel.time <= end_date)
+            if end_date:
+                stmt = stmt.where(MealModel.time <= start_date.date)
+                if start_date:
+                    stmt = stmt.where(MealModel.time >= end_date.date)
                 else:
-                    stmt = stmt.where(MealModel.time <= start_date + timedelta(days=1))
+                    stmt = stmt.where(MealModel.time >= start_date.date - timedelta(days=1))
             
             if after_id:
                 stmt = stmt.filter(MealModel.id > after_id)
