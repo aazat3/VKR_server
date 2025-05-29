@@ -55,36 +55,13 @@ class ProductsDAO(BaseDAO):
     #     return db_product
 
     async def add_product(
-        user_id: int,
-        categoryID: int,
-        name: str,
-        source_type_id: int,
-        energy_kcal: int,
-        protein_percent: int,
-        fat_percent: int,
-        carbohydrates_percent: int,
         **optional_fields,  # Остальные необязательные параметры
     ) -> ProductModel:
-        # Базовый набор обязательных полей
-        product_data = {
-            "added_by_user_id": user_id,
-            "categoryID": categoryID,
-            "name": name,
-            "source_type_id": source_type_id,
-            "energy_kcal": energy_kcal,
-            "protein_percent": protein_percent,
-            "fat_percent": fat_percent,
-            "carbohydrates_percent": carbohydrates_percent,
-        }
-
-        # Добавляем необязательные поля, если они переданы
-        product_data.update(optional_fields)
-
         try:
             async with async_session_factory() as session:
                 async with session.begin():
                     # Создаем объект продукта
-                    new_product = ProductModel(**product_data)
+                    new_product = ProductModel(**optional_fields)
                     session.add(new_product)
                     await session.flush()
                     await session.refresh(new_product)
