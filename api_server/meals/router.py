@@ -21,7 +21,7 @@ async def add_meal(meal: MealAdd, user_data: UserModel = Depends(get_current_use
     return MealResponse.model_validate(result)
 
 @router.delete("/", response_model=MealResponse)
-async def delete_meals(
+async def delete_meal(
     user_data: UserModel = Depends(get_current_user), 
     meal: MealDelete = Query(None, description="Удалить прием с ID"),):
 

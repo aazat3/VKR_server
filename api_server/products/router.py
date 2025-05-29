@@ -21,18 +21,18 @@ logger = logging.getLogger(__name__)
 
 # Эндпоинт для добавления продукта
 @router.post("/", response_model=ProductResponse)
-async def add_product(
+async def add_products(
     product: ProductAdd,
     user_data: UserModel = Depends(get_current_user)
 ):
     new_product = ProductCreate(added_by_user_id=user_data.id, **product.model_dump())
-    result = await add_product(new_product)
+    result = await ProductsDAO.add_product(new_product)
     return result
 
 
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[ProductResponseWithCategory])
-async def products(
+async def get_products(
     size: int = Query(50, ge=1, le=100),
     after_id: int | None = Query(None, description="Возвращать записи после этого ID"),
 ):
@@ -41,7 +41,7 @@ async def products(
 
 # Эндпоинт для получения всех продуктов по названию
 @router.get("/search", response_model=list[ProductResponseWithCategory])
-async def products(
+async def get_products_by_name(
     size: int = Query(50, ge=1, le=100),
     name: str | None = Query(None, description="Название продукта"),
 ):
