@@ -43,11 +43,11 @@ class ProductAdd(ProductBase):
     pass
 
 class ProductCreate(ProductBase):
-    added_by_user_id: int
+    added_by_user_id: int = None
 
 class ProductResponse(ProductBase):
     id: int
-    added_by_user_id: int
+    added_by_user_id: int = None
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
