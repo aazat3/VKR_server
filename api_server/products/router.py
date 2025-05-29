@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.security import OAuth2PasswordBearer
 import uvicorn
 from jose import jwt, JWTError
@@ -13,29 +13,35 @@ from SQL.models import *
 from SQL.products.schemas import *
 from SQL.products.dao import *
 
-router = APIRouter(prefix='/product', tags=['Product'])
+router = APIRouter(prefix="/product", tags=["Product"])
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-# # Эндпоинт для добавления продукта
-# @app.post("/products/", response_model=ProductResponse)
-# def create_product(product: ProductCreate, db: AsyncSession = Depends(get_session)):
-#     return ProductsDAO.create_product(db, product)
+# Эндпоинт для добавления продукта
+@router.post("/", response_model=ProductResponse)
+async def add_product(
+    product: ProductCreate,
+    user_data: UserModel = Depends(get_current_user),
+):
+    new_product = await add_product(user_id=user_data.id, **product.model_dump())
+    return new_product
+
 
 # Эндпоинт для получения всех продуктов
 @router.get("/", response_model=list[ProductResponseWithCategory])
 async def products(
     size: int = Query(50, ge=1, le=100),
     after_id: int | None = Query(None, description="Возвращать записи после этого ID"),
-    ):
+):
     return await ProductsDAO.get_products(size, after_id)
+
 
 # Эндпоинт для получения всех продуктов по названию
 @router.get("/search", response_model=list[ProductResponseWithCategory])
 async def products(
     size: int = Query(50, ge=1, le=100),
     name: str | None = Query(None, description="Название продукта"),
-    ):
+):
     return await ProductsDAO.get_products_by_name(name, size)

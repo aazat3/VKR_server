@@ -14,6 +14,11 @@ class ProductModel(Base):
     id: Mapped[int_pk]
     categoryID: Mapped[int] = mapped_column(ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)    # код
     name: Mapped[str]
+    source_type_id: Mapped[int] = mapped_column(default=1, nullable=False)
+    added_by_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True
+    )
     energy_kcal: Mapped[int] = mapped_column(nullable=True)                # Ккал
     water_percent: Mapped[int] = mapped_column(nullable=True)              # вода
     protein_percent: Mapped[int] = mapped_column(nullable=True)            # бел
@@ -47,7 +52,7 @@ class ProductModel(Base):
 
     category: Mapped["CategoryModel"] = relationship(back_populates="products")
     meals: Mapped[list["MealModel"]] = relationship(back_populates="product")
-
+    user: Mapped["UserModel"] = relationship(back_populates="products")
     
 
 class MealModel(Base):
@@ -82,6 +87,7 @@ class UserModel(Base):
     email: Mapped[str_uniq]
 
     meals: Mapped[list["MealModel"]] = relationship(back_populates="user")
+    product: Mapped["ProductModel"] = relationship(back_populates="users")
     device: Mapped[list["DeviceModel"]] = relationship(back_populates="user")
 
 

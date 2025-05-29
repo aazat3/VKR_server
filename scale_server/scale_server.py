@@ -119,10 +119,12 @@ async def recognize(websocket: WebSocketServerProtocol, path=None):
 async def search(q: str):
     sc_result = await ProductsDAO.get_products_by_name(q)
     logging.info(sc_result)
+    return sc_result.id
 
 
-async def save_to_db(q: str):
-    sc_result = await ProductsDAO.add_meal(q)
+async def save_to_db(q: str, device_id: str):
+    product_id = await search(q)
+    sc_result = await ProductsDAO.add_meal(product_id, device_id)
     logging.info(sc_result)
 
 

@@ -5,10 +5,11 @@ from SQL.categories.schemas import CategoryResponse
 
 
 class ProductBase(BaseModel):
-    name: str
     categoryID: int
+    name: str
+    source_type_id: int = 1  
     energy_kcal: int
-    water_percent: int
+    water_percent: Optional[int] = None
     protein_percent: int
     fat_percent: int
     carbohydrates_percent: int
