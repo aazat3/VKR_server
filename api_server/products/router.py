@@ -22,10 +22,19 @@ logger = logging.getLogger(__name__)
 # Эндпоинт для добавления продукта
 @router.post("/", response_model=ProductResponse)
 async def add_products(
-    product: ProductAdd,
-    user_data: UserModel = Depends(get_current_user)
+    product: ProductAdd, user_data: UserModel = Depends(get_current_user)
 ):
-    new_product = ProductCreate(added_by_user_id=user_data.id, **product.model_dump())
+    new_product = ProductCreate(
+        added_by_user_id=user_data.id,
+        categoryID=product.categoryID,
+        name=product.name,
+        source_type_id=product.source_type_id,
+        energy_kcal=product.energy_kcal,
+        protein_percent=product.protein_percent,
+        fat_percent=product.fat_percent,
+        carbohydrates_percent=product.carbohydrates_percent,
+        **product.model_dump()
+    )
     result = await ProductsDAO.add_product(new_product)
     return result
 

@@ -5,14 +5,14 @@ from SQL.categories.schemas import CategoryResponse
 
 
 class ProductBase(BaseModel):
-    categoryID: int
-    name: str
-    source_type_id: int = 3  
-    energy_kcal: int
+    categoryID: int = Field(..., description="ID категории продукта")
+    name: str = Field(..., min_length=1, max_length=255, description="Название продукта")
+    source_type_id: int = Field(3, description="Тип источника данных")
+    energy_kcal: int = Field(..., ge=0, description="Калории (ккал)")
     water_percent: Optional[int] = None
-    protein_percent: int
-    fat_percent: int
-    carbohydrates_percent: int
+    protein_percent: int = Field(..., ge=0, description="Белки (%)")
+    fat_percent: int = Field(..., ge=0, description="Жиры (%)")
+    carbohydrates_percent: int = Field(..., ge=0, description="Углеводы (%)")
     saturatedfa_percent: Optional[int] = None
     cholesterol_mg: Optional[int] = None
     monodisaccharides_percen: Optional[int] = None
