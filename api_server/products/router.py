@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 @router.post("/", response_model=ProductResponse)
 async def add_product(
     product: ProductAdd,
-    user_data: UserModel = Depends(get_current_user),
+    user_data: UserModel = Depends(get_current_user)
 ):
     new_product = ProductCreate(added_by_user_id=user_data.id, **product.model_dump())
     result = await add_product(new_product)
