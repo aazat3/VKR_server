@@ -33,11 +33,7 @@ async def add_products(
         protein_percent=product.protein_percent,
         fat_percent=product.fat_percent,
         carbohydrates_percent=product.carbohydrates_percent,
-        **product.model_dump(exclude={
-            "categoryID", "name", "source_type_id", 
-            "energy_kcal", "protein_percent", 
-            "fat_percent", "carbohydrates_percent"
-        })
+        **product.model_dump()
     )
     result = await ProductsDAO.add_product(new_product)
     return result
