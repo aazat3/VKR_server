@@ -39,11 +39,15 @@ class ProductBase(BaseModel):
     ethanol_percent: Optional[int] = None
 
 
-class ProductCreate(ProductBase):
+class ProductAdd(ProductBase):
     pass
+
+class ProductCreate(ProductBase):
+    added_by_user_id: int
 
 class ProductResponse(ProductBase):
     id: int
+    added_by_user_id: int
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic

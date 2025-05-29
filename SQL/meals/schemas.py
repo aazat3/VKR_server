@@ -7,24 +7,23 @@ from SQL.categories.schemas import CategoryResponse
 
 
 class MealBase(BaseModel):
-    userID: int = Field(..., description="ID пользователя")
+    
     productID: int = Field(..., description="ID продукта")
     weight: int = Field(..., description="Вес продукта")
     time: datetime = Field(..., description="Время")
 
-class MealCreate(MealBase):
+class MealAdd(MealBase):
     pass
 
-class MealAdd(BaseModel):
-    productID: int = Field(..., description="ID продукта")
-    weight: int = Field(..., description="Вес продукта")
-    time: datetime = Field(..., description="Время")
+class MealCreate(BaseModel):
+    userID: int = Field(..., description="ID пользователя")
 
 class MealDelete(BaseModel):
     id: int = Field(..., description="ID приема")
 
 class MealResponse(MealBase):
     id: int = Field(..., description="ID приема")
+    userID: int = Field(..., description="ID пользователя")
 
     class Config:
         from_attributes = True  # Позволяет SQLAlchemy объектам преобразовываться в Pydantic
