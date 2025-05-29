@@ -1,6 +1,5 @@
 from sqlalchemy import select, func, desc, case
 from sqlalchemy.orm import aliased, contains_eager, joinedload, selectinload
-from fastapi import HTTPException, status
 import logging
 
 from SQL.models import *
@@ -92,10 +91,7 @@ class ProductsDAO(BaseDAO):
                     return new_product
         except SQLAlchemyError as e:
             logger.error(f"Error adding product: {str(e)}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Database error occurred",
-            )
+            raise RuntimeError("Database error occurred")
 
     async def get_products_simple():
         async with async_session_factory() as session:
