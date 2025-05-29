@@ -87,7 +87,7 @@ class UserModel(Base):
     email: Mapped[str_uniq]
 
     meals: Mapped[list["MealModel"]] = relationship(back_populates="user")
-    product: Mapped["ProductModel"] = relationship(back_populates="users")
+    products: Mapped[list["ProductModel"]] = relationship(back_populates="user")
     device: Mapped[list["DeviceModel"]] = relationship(back_populates="user")
 
 
