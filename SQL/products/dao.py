@@ -57,6 +57,9 @@ class ProductsDAO(BaseDAO):
     async def add_product(
         **optional_fields,  # Остальные необязательные параметры
     ) -> ProductModel:
+        # Убедитесь, что не передается явный id
+        if "id" in optional_fields:
+            del optional_fields["id"]  # Удаляем явно переданный id
         try:
             async with async_session_factory() as session:
                 async with session.begin():
