@@ -24,10 +24,7 @@ logger = logging.getLogger(__name__)
 async def add_products(
     product: ProductAdd, user_data: UserModel = Depends(get_current_user)
 ):
-    new_product = ProductCreate(
-        added_by_user_id=user_data.id,
-        **product.model_dump()
-    )
+    new_product = ProductCreate(added_by_user_id=user_data.id, **product.model_dump())
     result = await ProductsDAO.add_product(**new_product.model_dump())
     return result
 
@@ -39,6 +36,15 @@ async def get_products(
     after_id: int | None = Query(None, description="Возвращать записи после этого ID"),
 ):
     return await ProductsDAO.get_products(size, after_id)
+
+
+@router.get("/by_user", response_model=list[ProductResponseWithCategory])
+async def get_products_by_user(
+    user_data: UserModel = Depends(get_current_user),
+    size: int = Query(50, ge=1, le=100),
+    after_id: int | None = Query(None, description="Возвращать записи после этого ID"),
+):
+    return await ProductsDAO.get_products_by_user(user_data.id, size, after_id)
 
 
 # Эндпоинт для получения всех продуктов по названию

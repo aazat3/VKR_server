@@ -10,6 +10,7 @@ from SQL.database import async_session_factory
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class ProductsDAO(BaseDAO):
     model = ProductModel
 
@@ -47,13 +48,6 @@ class ProductsDAO(BaseDAO):
             print(f"Ошибка при поиске: {e}")
             return []
 
-    # async def create_product(session: AsyncSession, product: ProductCreate):
-    #     session = ProductModel(name=product.name, calories=product.calories)
-    #     session.add(db_product)
-    #     await session.commit()
-    #     await session.refresh(db_product)
-    #     return db_product
-
     async def add_product(
         **optional_fields,  # Остальные необязательные параметры
     ) -> ProductModel:
@@ -90,6 +84,24 @@ class ProductsDAO(BaseDAO):
             if after_id:
                 stmt = stmt.filter(ProductModel.id > after_id)
 
+            stmt = (
+                stmt.options(joinedload(ProductModel.category))
+                .order_by(ProductModel.id.asc())
+                .limit(size)
+            )
+            result = await session.execute(stmt)
+            return result.scalars().all()
+
+    async def get_products_by_user(
+        user_id: int,
+        size: int = 50,
+        after_id: int | None = None,
+    ):
+        async with async_session_factory() as session:
+            stmt = select(ProductModel)
+            if after_id:
+                stmt = stmt.filter(ProductModel.id > after_id)
+            stmt = stmt.filter(ProductModel.added_by_user_id == user_id)
             stmt = (
                 stmt.options(joinedload(ProductModel.category))
                 .order_by(ProductModel.id.asc())
