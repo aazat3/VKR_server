@@ -60,6 +60,7 @@ class ProductsDAO(BaseDAO):
         # Убедитесь, что не передается явный id
         if "id" in optional_fields:
             del optional_fields["id"]  # Удаляем явно переданный id
+            logger.info(f"optional_fields have product id")
         try:
             async with async_session_factory() as session:
                 async with session.begin():
