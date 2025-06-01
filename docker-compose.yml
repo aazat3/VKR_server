@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   dev:
 
@@ -53,6 +51,7 @@ services:
       - dev
     restart: always
 
+# docker compose --profile certbot run --rm certbot certonly --webroot -w /var/www/certbot -d aazatserver.ru
   certbot:
     image: certbot/certbot
     profiles: ["certbot"]
