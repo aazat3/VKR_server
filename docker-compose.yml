@@ -55,6 +55,7 @@ services:
 
   certbot:
     image: certbot/certbot
+    profiles: ["certbot"]
     container_name: certbot
     volumes:
       - ./certbot/www:/var/www/certbot
