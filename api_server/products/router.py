@@ -38,7 +38,7 @@ async def get_products(
     return await ProductsDAO.get_products(size, after_id)
 
 
-@router.get("/by_user", response_model=list[ProductResponseWithCategory])
+@router.get("/by_user/", response_model=list[ProductResponseWithCategory])
 async def get_products_by_user(
     user_data: UserModel = Depends(get_current_user),
     size: int = Query(50, ge=1, le=100),
@@ -48,7 +48,7 @@ async def get_products_by_user(
 
 
 # Эндпоинт для получения всех продуктов по названию
-@router.get("/search", response_model=list[ProductResponseWithCategory])
+@router.get("/search/", response_model=list[ProductResponseWithCategory])
 async def get_products_by_name(
     size: int = Query(50, ge=1, le=100),
     name: str | None = Query(None, description="Название продукта"),
