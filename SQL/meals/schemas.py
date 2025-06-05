@@ -15,7 +15,7 @@ class MealBase(BaseModel):
 class MealAdd(MealBase):
     pass
 
-class MealCreate(BaseModel):
+class MealCreate(MealAdd):
     userID: int = Field(..., description="ID пользователя")
 
 class MealDelete(BaseModel):
